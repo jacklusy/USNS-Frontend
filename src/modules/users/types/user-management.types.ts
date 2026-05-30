@@ -48,6 +48,11 @@ export interface DepartmentOption {
   label: string;
 }
 
+export interface AssigneeOption {
+  value: string;
+  label: string;
+}
+
 export type UserStatusAction = "activate" | "deactivate" | "suspend";
 
 export type BulkUserStatusAction = UserStatusAction;

@@ -21,6 +21,7 @@ export const PERMISSIONS = {
     departmentsManage: "academic.departments.manage",
     programsManage: "academic.programs.manage",
     coursesManage: "academic.courses.manage",
+    calendarManage: "academic.calendar.manage",
   },
   faculty: {
     view: "faculty.view",

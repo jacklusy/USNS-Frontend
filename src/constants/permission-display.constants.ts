@@ -46,6 +46,7 @@ const PERMISSION_LABELS: Record<Permission, string> = {
   "academic.departments.manage": "Manage departments",
   "academic.programs.manage": "Manage programs",
   "academic.courses.manage": "Manage courses",
+  "academic.calendar.manage": "Manage academic calendar",
   "faculty.view": "View faculty",
   "faculty.manage": "Manage faculty",
   "staff.view": "View staff",

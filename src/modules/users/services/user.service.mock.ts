@@ -23,7 +23,10 @@ import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import type { AppError } from "@/types/error.types";
 import type { UserActivityQueryParams } from "../types/user-audit.types";
 import type { UserAuditEntry } from "../types/user-audit.types";
+import { UserStatus } from "@/types/user.types";
+import type { UserRole } from "@/types/user.types";
 import type {
+  AssigneeOption,
   BulkUserStatusAction,
   CreateUserInput,
   ManagedUser,
@@ -240,6 +243,22 @@ export class MockUserService extends MockServiceBase implements IUserService {
     getUsersStore().length = 0;
     getUsersStore().push(...remaining);
     return { data: null };
+  }
+
+  async listAssigneeOptions(params?: {
+    roles?: readonly UserRole[];
+  }): Promise<ApiResponse<AssigneeOption[]>> {
+    await this.delay(100);
+    const roleSet = params?.roles ? new Set(params.roles) : null;
+    const data = getUsersStore()
+      .filter((user) => user.status === UserStatus.Active)
+      .filter((user) => (roleSet ? roleSet.has(user.role) : true))
+      .map((user) => ({
+        value: user.id,
+        label: user.fullName,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+    return { data };
   }
 }
 

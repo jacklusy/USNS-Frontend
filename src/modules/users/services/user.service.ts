@@ -1,7 +1,9 @@
 import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import type { UserActivityQueryParams } from "../types/user-audit.types";
 import type { UserAuditEntry } from "../types/user-audit.types";
+import type { UserRole } from "@/types/user.types";
 import type {
+  AssigneeOption,
   BulkUserStatusAction,
   CreateUserInput,
   ManagedUser,
@@ -31,4 +33,7 @@ export interface IUserService {
     action: BulkUserStatusAction,
   ): Promise<ApiResponse<ManagedUser[]>>;
   bulkDelete(ids: string[]): Promise<ApiResponse<null>>;
+  listAssigneeOptions(params?: {
+    roles?: readonly UserRole[];
+  }): Promise<ApiResponse<AssigneeOption[]>>;
 }

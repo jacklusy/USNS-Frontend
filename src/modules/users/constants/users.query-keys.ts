@@ -11,4 +11,5 @@ export const usersQueryKeys = {
     [...usersQueryKeys.all, "activity", userId, params ?? {}] as const,
   roles: ["users", "roles"] as const,
   departments: ["users", "departments"] as const,
+  assignees: ["users", "assignees"] as const,
 };

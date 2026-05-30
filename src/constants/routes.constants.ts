@@ -12,8 +12,33 @@ export const ROUTES = {
   ANNOUNCEMENTS: "/announcements",
   USERS: "/users",
   ROLES: "/roles",
+  COLLEGES: "/colleges",
+  DEPARTMENTS: "/departments",
+  PROGRAMS: "/programs",
+  COURSES: "/courses",
+  ACADEMIC_YEARS: "/academic-years",
   DEV_UI_KIT: "/dev/ui-kit",
 } as const;
+
+export function collegeDetailRoute(id: string): string {
+  return `${ROUTES.COLLEGES}/${id}`;
+}
+
+export function departmentDetailRoute(id: string): string {
+  return `${ROUTES.DEPARTMENTS}/${id}`;
+}
+
+export function programDetailRoute(id: string): string {
+  return `${ROUTES.PROGRAMS}/${id}`;
+}
+
+export function courseDetailRoute(id: string): string {
+  return `${ROUTES.COURSES}/${id}`;
+}
+
+export function academicYearDetailRoute(id: string): string {
+  return `${ROUTES.ACADEMIC_YEARS}/${id}`;
+}
 
 export function userDetailRoute(id: string): string {
   return `${ROUTES.USERS}/${id}`;

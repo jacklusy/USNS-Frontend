@@ -3,7 +3,9 @@ import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import type { UserActivityQueryParams } from "../types/user-audit.types";
 import type { UserAuditEntry } from "../types/user-audit.types";
+import type { UserRole } from "@/types/user.types";
 import type {
+  AssigneeOption,
   BulkUserStatusAction,
   CreateUserInput,
   ManagedUser,
@@ -119,6 +121,12 @@ export class RealUserService implements IUserService {
       ids,
     });
     return { data: null };
+  }
+
+  async listAssigneeOptions(_params?: {
+    roles?: readonly UserRole[];
+  }): Promise<ApiResponse<AssigneeOption[]>> {
+    throw new Error("User assignee options API not integrated");
   }
 }
 

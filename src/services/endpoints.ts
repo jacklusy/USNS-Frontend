@@ -64,6 +64,27 @@ export const ENDPOINTS = {
     update: (id: string) => `/courses/${id}`,
     delete: (id: string) => `/courses/${id}`,
   },
+  academicYears: {
+    list: "/academic-years",
+    byId: (id: string) => `/academic-years/${id}`,
+    create: "/academic-years",
+    update: (id: string) => `/academic-years/${id}`,
+    delete: (id: string) => `/academic-years/${id}`,
+  },
+  semesters: {
+    listByYear: (yearId: string) => `/academic-years/${yearId}/semesters`,
+    byId: (yearId: string, id: string) =>
+      `/academic-years/${yearId}/semesters/${id}`,
+    create: (yearId: string) => `/academic-years/${yearId}/semesters`,
+    update: (yearId: string, id: string) =>
+      `/academic-years/${yearId}/semesters/${id}`,
+    delete: (yearId: string, id: string) =>
+      `/academic-years/${yearId}/semesters/${id}`,
+    activate: (yearId: string, id: string) =>
+      `/academic-years/${yearId}/semesters/${id}/activate`,
+    close: (yearId: string, id: string) =>
+      `/academic-years/${yearId}/semesters/${id}/close`,
+  },
   faculty: {
     list: "/faculty",
     byId: (id: string) => `/faculty/${id}`,

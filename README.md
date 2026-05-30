@@ -110,6 +110,26 @@ Requires `roles.view`. Mock data in `src/mock/roles/`; services in `src/modules/
 | Matrix | `/roles?tab=matrix` — compare roles vs permissions, filter by group, export CSV |
 | Auth note | Permission edits update the mock store only; sign-in RBAC still uses `ROLE_PERMISSIONS` until API wiring |
 
+### Academic structure (EPIC-08)
+
+Mock data in `src/mock/academic/`; services in `src/modules/academic/`.
+
+| Account | Academic access |
+| --- | --- |
+| `president@usns.edu` | All colleges, departments, programs, courses, and academic calendar |
+| `dean@usns.edu` | Same academic manage permissions as president for structure modules |
+| `admin@usns.edu` | No academic nav (users/roles only) |
+
+| Route | Feature |
+| --- | --- |
+| `/colleges` | List, create/edit drawers, detail with linked departments; deactivate with optional department cascade |
+| `/departments` | List with college filter (`?collegeId=`), CRUD, detail with courses and staff count |
+| `/courses` | CRUD with prerequisite multi-select; circular dependency validation in mock service |
+| `/programs` | CRUD with program type, duration, curriculum courses; status confirmation |
+| `/academic-years` | Year list with active indicator; year detail with semester activate/close warnings |
+
+User create/edit department dropdown reads from the academic department store (not the legacy flat list).
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

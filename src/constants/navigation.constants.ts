@@ -98,6 +98,42 @@ export const DASHBOARD_NAV_GROUPS: readonly NavGroup[] = [
     ],
   },
   {
+    id: "academic",
+    label: "Academic",
+    items: [
+      {
+        href: ROUTES.COLLEGES,
+        label: "Colleges",
+        icon: "reports",
+        requiredPermission: PERMISSIONS.academic.collegesManage,
+      },
+      {
+        href: ROUTES.DEPARTMENTS,
+        label: "Departments",
+        icon: "reports",
+        requiredPermission: PERMISSIONS.academic.departmentsManage,
+      },
+      {
+        href: ROUTES.PROGRAMS,
+        label: "Programs",
+        icon: "reports",
+        requiredPermission: PERMISSIONS.academic.programsManage,
+      },
+      {
+        href: ROUTES.COURSES,
+        label: "Courses",
+        icon: "reports",
+        requiredPermission: PERMISSIONS.academic.coursesManage,
+      },
+      {
+        href: ROUTES.ACADEMIC_YEARS,
+        label: "Academic calendar",
+        icon: "reports",
+        requiredPermission: PERMISSIONS.academic.calendarManage,
+      },
+    ],
+  },
+  {
     id: "insights",
     label: "Insights",
     items: [
