@@ -29,6 +29,8 @@ export interface DataTableAction<TRow extends DataTableRowBase> {
   onSelect: (row: TRow) => void;
   requiredPermission?: Permission;
   destructive?: boolean;
+  /** When set, the action is shown only for rows where this returns true. */
+  isVisible?: (row: TRow) => boolean;
 }
 
 export interface DataTableBulkAction<TRow extends DataTableRowBase> {

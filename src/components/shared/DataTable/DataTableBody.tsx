@@ -37,7 +37,9 @@ function RowActionsMenu<TRow extends DataTableRowBase>({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const visibleActions = actions.filter(
-    (action) => !action.requiredPermission || can(action.requiredPermission),
+    (action) =>
+      (!action.requiredPermission || can(action.requiredPermission)) &&
+      (!action.isVisible || action.isVisible(row)),
   );
 
   const close = useCallback(() => {
