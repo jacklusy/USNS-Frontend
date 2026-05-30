@@ -2,6 +2,7 @@ export const BREADCRUMB_SEGMENT_LABELS: Record<string, string> = {
   dashboard: "Dashboard",
   settings: "Settings",
   users: "Users",
+  roles: "Roles",
   reports: "Reports",
   audit: "Audit logs",
   errors: "Errors",
@@ -18,6 +19,7 @@ export const BREADCRUMB_ROUTE_LABELS: Record<string, string> = {
   "/settings": "Settings",
   "/announcements": "Announcements",
   "/users": "Users",
+  "/roles": "Roles",
 };
 
 export function formatSegmentLabel(segment: string): string {

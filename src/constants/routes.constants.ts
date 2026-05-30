@@ -11,6 +11,7 @@ export const ROUTES = {
   ERRORS_FORBIDDEN: "/errors/forbidden",
   ANNOUNCEMENTS: "/announcements",
   USERS: "/users",
+  ROLES: "/roles",
   DEV_UI_KIT: "/dev/ui-kit",
 } as const;
 

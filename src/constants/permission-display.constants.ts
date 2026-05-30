@@ -2,6 +2,23 @@ import { getPermissionsForRole } from "@/constants/role-permissions.constants";
 import { PERMISSIONS, type Permission } from "@/types/permission.types";
 import type { UserRole } from "@/types/user.types";
 
+function collectPermissions(node: unknown): Permission[] {
+  if (typeof node === "string") {
+    return [node as Permission];
+  }
+  if (typeof node === "object" && node !== null) {
+    return Object.values(node).flatMap(collectPermissions);
+  }
+  return [];
+}
+
+const ALL_PERMISSIONS = collectPermissions(PERMISSIONS) as readonly Permission[];
+
+export const ALL_PERMISSION_VALUES = ALL_PERMISSIONS as readonly [
+  Permission,
+  ...Permission[],
+];
+
 const PERMISSION_CATEGORY_LABELS: Record<string, string> = {
   users: "Users",
   roles: "Roles",
@@ -93,4 +110,35 @@ export function getAllPermissionCategories(): string[] {
   return Object.keys(PERMISSIONS).map(
     (key) => PERMISSION_CATEGORY_LABELS[key] ?? key,
   );
+}
+
+export function listAllPermissionsGrouped(): PermissionCategoryGroup[] {
+  const grouped = new Map<string, { key: Permission; label: string }[]>();
+
+  for (const permission of ALL_PERMISSIONS) {
+    const category = permissionCategory(permission);
+    const existing = grouped.get(category) ?? [];
+    existing.push({
+      key: permission,
+      label: getPermissionLabel(permission),
+    });
+    grouped.set(category, existing);
+  }
+
+  const categoryOrder = Object.values(PERMISSION_CATEGORY_LABELS);
+  return Array.from(grouped.entries())
+    .map(([category, items]) => ({
+      category,
+      permissions: items.sort((a, b) => a.label.localeCompare(b.label)),
+    }))
+    .sort((a, b) => {
+      const indexA = categoryOrder.indexOf(a.category);
+      const indexB = categoryOrder.indexOf(b.category);
+      if (indexA === -1 && indexB === -1) {
+        return a.category.localeCompare(b.category);
+      }
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
 }

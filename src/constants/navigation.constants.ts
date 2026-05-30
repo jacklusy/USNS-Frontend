@@ -55,10 +55,29 @@ export const DASHBOARD_NAV_GROUPS: readonly NavGroup[] = [
         requiredPermission: PERMISSIONS.users.view,
         children: [
           {
-            href: "/users",
+            href: ROUTES.USERS,
             label: "All users",
             icon: "users",
             requiredPermission: PERMISSIONS.users.view,
+          },
+        ],
+      },
+      {
+        label: "Roles",
+        icon: "users",
+        requiredPermission: PERMISSIONS.roles.view,
+        children: [
+          {
+            href: ROUTES.ROLES,
+            label: "All roles",
+            icon: "users",
+            requiredPermission: PERMISSIONS.roles.view,
+          },
+          {
+            href: `${ROUTES.ROLES}?tab=matrix`,
+            label: "Permission matrix",
+            icon: "users",
+            requiredPermission: PERMISSIONS.roles.view,
           },
         ],
       },

@@ -93,6 +93,23 @@ Requires `users.view`. Mock data and services live under `src/mock/users/` and `
 
 Password for all mock accounts: `Password1!`
 
+### Role management (`/roles`, EPIC-07)
+
+Requires `roles.view`. Mock data in `src/mock/roles/`; services in `src/modules/roles/`.
+
+| Account | Role management capabilities |
+| --- | --- |
+| `president@usns.edu` | Full list, create/edit/delete custom roles, permission matrix export |
+| `admin@usns.edu` | View list, view drawers, permission matrix; **no** create/edit/delete |
+| Others | No roles permissions (nav hidden) |
+
+| Feature | Notes |
+| --- | --- |
+| List | `/roles` — search, system role badge, user counts, row actions |
+| Create / edit | Drawer with permission matrix (group select-all); system roles: name locked, no delete |
+| Matrix | `/roles?tab=matrix` — compare roles vs permissions, filter by group, export CSV |
+| Auth note | Permission edits update the mock store only; sign-in RBAC still uses `ROLE_PERMISSIONS` until API wiring |
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).
