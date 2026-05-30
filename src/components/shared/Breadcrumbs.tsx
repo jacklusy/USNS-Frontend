@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
+import { useUiStore } from "@/store/ui.slice";
 
 interface BreadcrumbsProps {
   dynamicLabels?: Record<string, string>;
@@ -11,7 +12,11 @@ interface BreadcrumbsProps {
 
 export function Breadcrumbs({ dynamicLabels }: BreadcrumbsProps) {
   const pathname = usePathname();
-  const items = useBreadcrumbs({ pathname, dynamicLabels });
+  const storeLabels = useUiStore((s) => s.breadcrumbSegmentLabels);
+  const items = useBreadcrumbs({
+    pathname,
+    dynamicLabels: { ...storeLabels, ...dynamicLabels },
+  });
 
   if (items.length === 0) {
     return null;

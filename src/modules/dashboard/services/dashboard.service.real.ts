@@ -1,7 +1,8 @@
-import { get } from "@/services/api-client";
+import { get, getPaginated } from "@/services/api-client";
 import { ENDPOINTS } from "@/services/endpoints";
-import type { ApiResponse } from "@/types/api.types";
+import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import type {
+  ActivityQueryParams,
   DashboardActivityItem,
   DashboardAnalytics,
   DashboardAnnouncement,
@@ -10,6 +11,18 @@ import type {
   DashboardStats,
 } from "../types/dashboard.types";
 import type { IDashboardService } from "./dashboard.service";
+
+function buildActivityQuery(params?: ActivityQueryParams): string {
+  const search = new URLSearchParams();
+  if (params?.page !== undefined) {
+    search.set("page", String(params.page));
+  }
+  if (params?.per_page !== undefined) {
+    search.set("per_page", String(params.per_page));
+  }
+  const query = search.toString();
+  return query ? `?${query}` : "";
+}
 
 export class RealDashboardService implements IDashboardService {
   async getStats(): Promise<ApiResponse<DashboardStats>> {
@@ -43,11 +56,28 @@ export class RealDashboardService implements IDashboardService {
     return { data };
   }
 
-  async getRecentActivity(): Promise<ApiResponse<DashboardActivityItem[]>> {
-    const data = await get<DashboardActivityItem[]>(
-      ENDPOINTS.dashboard.recentActivity,
+  async getAnnouncements(): Promise<ApiResponse<DashboardAnnouncement[]>> {
+    const data = await get<DashboardAnnouncement[]>(
+      ENDPOINTS.dashboard.announcements,
     );
     return { data };
+  }
+
+  async getBannerAnnouncement(): Promise<
+    ApiResponse<DashboardAnnouncement | null>
+  > {
+    const data = await get<DashboardAnnouncement | null>(
+      ENDPOINTS.dashboard.announcementBanner,
+    );
+    return { data };
+  }
+
+  async getRecentActivity(
+    params?: ActivityQueryParams,
+  ): Promise<PaginatedResponse<DashboardActivityItem>> {
+    return getPaginated<DashboardActivityItem>(
+      `${ENDPOINTS.dashboard.recentActivity}${buildActivityQuery(params)}`,
+    );
   }
 }
 

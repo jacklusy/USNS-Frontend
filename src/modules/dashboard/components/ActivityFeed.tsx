@@ -1,13 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { Activity } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { DASHBOARD_SECTION_COPY } from "@/constants/dashboard.constants";
-import { useDashboardActivity } from "../hooks/useDashboardActivity";
+import { useDashboardActivityFeed } from "../hooks/useDashboardActivityFeed";
 import { DashboardSection } from "./DashboardSection";
-import { formatActivityDescription } from "@/utils/format-activity-description";
-import { formatRelativeTime } from "@/utils/format-relative-time";
-import { getUserInitials } from "@/utils/user-initials";
+import { ActivityFeedItem } from "./ActivityFeedItem";
 
 function ActivityFeedSkeleton() {
   return (
@@ -29,8 +28,21 @@ function ActivityFeedSkeleton() {
 }
 
 export function ActivityFeed() {
-  const { data, isLoading, isError, isFetching, refetch } = useDashboardActivity();
-  const items = data?.data ?? [];
+  const {
+    data,
+    isLoading,
+    isError,
+    isFetching,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useDashboardActivityFeed();
+
+  const items = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data?.pages],
+  );
 
   return (
     <DashboardSection
@@ -42,7 +54,7 @@ export function ActivityFeed() {
       onRefresh={() => {
         void refetch();
       }}
-      isRefreshing={isFetching}
+      isRefreshing={isFetching && !isFetchingNextPage}
       loadingFallback={<ActivityFeedSkeleton />}
     >
       {items.length === 0 ? (
@@ -60,32 +72,27 @@ export function ActivityFeed() {
           </p>
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className="flex gap-3 rounded-lg border border-border bg-surface-elevated p-4"
-            >
-              <span
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-[13px] font-medium text-white"
-                aria-hidden="true"
+        <>
+          <ul className="flex flex-col gap-3" aria-live="polite">
+            {items.map((item) => (
+              <ActivityFeedItem key={item.id} item={item} />
+            ))}
+          </ul>
+          {hasNextPage ? (
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  void fetchNextPage();
+                }}
+                disabled={isFetchingNextPage}
+                className="inline-flex h-11 min-w-[140px] items-center justify-center rounded-md border border-brand bg-surface px-5 text-[15px] font-medium text-brand transition-colors hover:bg-usns-green-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {getUserInitials(item.actorName)}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[15px] text-foreground">
-                  {formatActivityDescription(item)}
-                </p>
-                <time
-                  className="mt-1 block text-[13px] text-muted-fg"
-                  dateTime={item.createdAt}
-                >
-                  {formatRelativeTime(item.createdAt)}
-                </time>
-              </div>
-            </li>
-          ))}
-        </ul>
+                {isFetchingNextPage ? "Loading…" : "Load more"}
+              </button>
+            </div>
+          ) : null}
+        </>
       )}
     </DashboardSection>
   );

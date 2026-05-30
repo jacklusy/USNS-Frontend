@@ -9,6 +9,7 @@ export const ROUTES = {
   SESSION_EXPIRED: "/session-expired",
   ERRORS_UNAUTHORIZED: "/errors/unauthorized",
   ERRORS_FORBIDDEN: "/errors/forbidden",
+  ANNOUNCEMENTS: "/announcements",
 } as const;
 
 export function loginWithReturn(returnUrl: string): string {

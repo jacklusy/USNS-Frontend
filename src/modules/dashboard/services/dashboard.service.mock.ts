@@ -1,13 +1,17 @@
 import { MockServiceBase } from "@/lib/mock-service-base";
 import {
-  mockDashboardActivity,
+  buildMockQuickActions,
+  getMockBannerAnnouncement,
   mockDashboardAnalytics,
-  mockDashboardAnnouncement,
+  mockDashboardAnnouncementsList,
   mockDashboardKpis,
-  mockDashboardQuickActions,
   mockDashboardStats,
+  paginateMockActivity,
 } from "@/mock/dashboard/dashboard.mock";
+import type { ActivityQueryParams } from "../types/dashboard.types";
 import type { IDashboardService } from "./dashboard.service";
+
+const DEFAULT_ACTIVITY_PER_PAGE = 5;
 
 export class MockDashboardService
   extends MockServiceBase
@@ -30,17 +34,29 @@ export class MockDashboardService
 
   async getQuickActions() {
     await this.delay(200);
-    return mockDashboardQuickActions;
+    return { data: buildMockQuickActions() };
   }
 
   async getAnnouncement() {
     await this.delay(150);
-    return mockDashboardAnnouncement;
+    return { data: getMockBannerAnnouncement() };
   }
 
-  async getRecentActivity() {
+  async getAnnouncements() {
     await this.delay(200);
-    return mockDashboardActivity;
+    return mockDashboardAnnouncementsList;
+  }
+
+  async getBannerAnnouncement() {
+    await this.delay(150);
+    return { data: getMockBannerAnnouncement() };
+  }
+
+  async getRecentActivity(params?: ActivityQueryParams) {
+    await this.delay(200);
+    const page = params?.page ?? 1;
+    const perPage = params?.per_page ?? DEFAULT_ACTIVITY_PER_PAGE;
+    return paginateMockActivity(page, perPage);
   }
 }
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Bell,
   ChevronDown,
   FileText,
   LayoutDashboard,
@@ -36,6 +37,7 @@ const NAV_ICON_MAP: Record<NavIconKey, LucideIcon> = {
   reports: FileText,
   users: Users,
   audit: ScrollText,
+  bell: Bell,
 };
 
 interface DashboardSidebarProps {

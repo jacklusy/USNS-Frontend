@@ -71,7 +71,7 @@ export function QuickActions() {
           </p>
         </div>
       ) : (
-        <ul className="grid gap-2">
+        <ul role="list" className="grid gap-2">
           {visibleActions.map((action) => {
             const Icon = QUICK_ACTION_ICON_MAP[action.icon];
             return (

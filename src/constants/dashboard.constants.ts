@@ -1,3 +1,5 @@
+export const ACTIVITY_FEED_PER_PAGE = 5;
+
 export const DASHBOARD_SECTION_COPY = {
   kpis: {
     title: "Key metrics",
@@ -20,6 +22,16 @@ export const DASHBOARD_SECTION_COPY = {
     description: "Shortcuts for frequent administrative tasks",
     error: "Unable to load quick actions.",
     empty: "No quick actions available for your role.",
+  },
+  announcements: {
+    title: "Announcements",
+    description: "System-wide notices and critical updates",
+    error: "Unable to load announcements.",
+    empty: "No announcements to display.",
+    viewAllLabel: "View all announcements",
+    dismissLabel: "Dismiss announcement",
+    backToList: "Back to announcements",
+    unreadLabel: "Unread",
   },
 } as const;
 

@@ -28,6 +28,8 @@ export const ENDPOINTS = {
     analytics: "/dashboard/analytics",
     quickActions: "/dashboard/quick-actions",
     announcement: "/dashboard/announcement",
+    announcements: "/announcements",
+    announcementBanner: "/dashboard/announcement-banner",
   },
   colleges: {
     list: "/colleges",

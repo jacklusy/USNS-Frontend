@@ -25,8 +25,9 @@ cp .env.example .env.local
 
 | Variable                   | Description                                                                |
 | -------------------------- | -------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_API_BASE_URL` | Laravel API base URL (used when mock mode is off)                          |
-| `NEXT_PUBLIC_MOCK_MODE`    | Set to `true` to use mock services and block real HTTP from the API client |
+| `NEXT_PUBLIC_API_BASE_URL`              | Laravel API base URL (used when mock mode is off)                          |
+| `NEXT_PUBLIC_MOCK_MODE`               | Set to `true` to use mock services and block real HTTP from the API client |
+| `NEXT_PUBLIC_ACTIVITY_POLL_INTERVAL_MS` | Activity feed polling interval in ms (default `60000`)                     |
 
 4. Start the development server:
 
@@ -63,9 +64,10 @@ Open [http://localhost:3000](http://localhost:3000).
 | --- | --- |
 | KPI cards | Trend indicators and per-section **Refresh** |
 | Analytics | Line, bar, and donut charts (lazy-loaded Recharts) |
-| Activity feed | Recent events with relative timestamps |
-| Quick actions | Filtered by role permissions |
-| Announcement | Critical banner; dismiss persists for the browser session |
+| Activity feed | Paginated recent events with action-type icons, **Load more**, and configurable polling |
+| Quick actions | Typed config in `dashboard-quick-actions.constants.ts`; filtered by role permissions |
+| Announcement banner | Critical unread banner on dashboard; dismiss persists for the browser session |
+| Announcements center | `/announcements` list and `/announcements/[id]` detail; read state in session storage |
 
 ## Scripts
 

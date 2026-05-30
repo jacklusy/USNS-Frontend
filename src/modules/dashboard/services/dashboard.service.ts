@@ -1,5 +1,6 @@
-import type { ApiResponse } from "@/types/api.types";
+import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import type {
+  ActivityQueryParams,
   DashboardActivityItem,
   DashboardAnalytics,
   DashboardAnnouncement,
@@ -14,5 +15,9 @@ export interface IDashboardService {
   getAnalytics(): Promise<ApiResponse<DashboardAnalytics>>;
   getQuickActions(): Promise<ApiResponse<DashboardQuickAction[]>>;
   getAnnouncement(): Promise<ApiResponse<DashboardAnnouncement | null>>;
-  getRecentActivity(): Promise<ApiResponse<DashboardActivityItem[]>>;
+  getAnnouncements(): Promise<ApiResponse<DashboardAnnouncement[]>>;
+  getBannerAnnouncement(): Promise<ApiResponse<DashboardAnnouncement | null>>;
+  getRecentActivity(
+    params?: ActivityQueryParams,
+  ): Promise<PaginatedResponse<DashboardActivityItem>>;
 }

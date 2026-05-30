@@ -42,13 +42,16 @@ export type QuickActionIconKey =
   | "settings"
   | "bell";
 
-export interface DashboardQuickAction {
+export interface DashboardQuickActionDefinition {
   id: string;
   label: string;
   href: string;
   icon: QuickActionIconKey;
-  badgeCount?: number;
   requiredPermission?: Permission;
+}
+
+export interface DashboardQuickAction extends DashboardQuickActionDefinition {
+  badgeCount?: number;
 }
 
 export type AnnouncementPriority = "critical" | "normal";
@@ -58,13 +61,29 @@ export interface DashboardAnnouncement {
   title: string;
   body: string;
   priority: AnnouncementPriority;
+  authorName: string;
   createdAt: string;
 }
+
+export type ActivityActionType =
+  | "created"
+  | "updated"
+  | "deleted"
+  | "exported"
+  | "approved"
+  | "viewed";
 
 export interface DashboardActivityItem {
   id: string;
   actorName: string;
   action: string;
+  actionType: ActivityActionType;
   resourceType: string;
+  targetLabel: string;
   createdAt: string;
+}
+
+export interface ActivityQueryParams {
+  page?: number;
+  per_page?: number;
 }
