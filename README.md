@@ -40,9 +40,12 @@ Open [http://localhost:3000](http://localhost:3000).
 
 | Flow | Credentials / URL |
 | --- | --- |
-| Sign in | `president@usns.edu` or `admin@usns.edu` — password `Password1!` |
+| Sign in | `president@usns.edu`, `admin@usns.edu`, `dean@usns.edu`, `dba@usns.edu`, or `faculty@usns.edu` — password `Password1!` |
+| Settings (RBAC) | Sign in as `dba@usns.edu` or `admin@usns.edu`; visit `/settings` |
+| Access denied demo | Sign in as `faculty@usns.edu` and open `/settings` |
 | Reset password | `/reset-password?token=valid_reset_token` |
 | Expired reset link | `/reset-password?token=expired_reset_token` |
+| Session expired | Set access token to `mock_access_session_expired` in devtools, then reload a protected page |
 
 ## Scripts
 
@@ -76,7 +79,7 @@ src/
 - All HTTP traffic goes through `src/services/api-client.ts` from the **service layer only** — not from pages or components.
 - API paths are defined in `src/services/endpoints.ts` — no raw URL strings elsewhere.
 - Environment variables are read only in `src/config/env.ts`.
-- When `NEXT_PUBLIC_MOCK_MODE=true`, the API client rejects outbound requests; feature services use mock implementations.
+- When `NEXT_PUBLIC_MOCK_MODE=true`, the API client rejects outbound requests except `POST /auth/refresh`, which delegates to the mock auth service; other traffic uses mock service implementations.
 
 ## Service layer
 

@@ -29,6 +29,33 @@ export const MOCK_AUTH_USERS: Record<string, MockAuthRecord> = {
       role: "admin",
     },
   },
+  "dean@usns.edu": {
+    password: "Password1!",
+    user: {
+      id: "usr_dean",
+      name: "Sara Mitchell",
+      email: "dean@usns.edu",
+      role: "dean",
+    },
+  },
+  "dba@usns.edu": {
+    password: "Password1!",
+    user: {
+      id: "usr_dba",
+      name: "Omar Farouk",
+      email: "dba@usns.edu",
+      role: "dba",
+    },
+  },
+  "faculty@usns.edu": {
+    password: "Password1!",
+    user: {
+      id: "usr_faculty",
+      name: "Elena Vasquez",
+      email: "faculty@usns.edu",
+      role: "faculty",
+    },
+  },
 };
 
 export const MOCK_RESET_TOKENS: Record<string, ValidateResetTokenResponse> = {

@@ -2,6 +2,7 @@ import { get, post } from "@/services/api-client";
 import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse } from "@/types/api.types";
 import type {
+  AuthTokens,
   AuthUser,
   ForgotPasswordInput,
   LoginCredentials,
@@ -21,6 +22,13 @@ export class RealAuthService implements IAuthService {
 
   async logout(): Promise<void> {
     await post<void>(ENDPOINTS.auth.logout);
+  }
+
+  async refreshTokens(refreshToken: string): Promise<ApiResponse<AuthTokens>> {
+    const data = await post<AuthTokens>(ENDPOINTS.auth.refresh, {
+      refresh_token: refreshToken,
+    });
+    return { data };
   }
 
   async getMe(): Promise<ApiResponse<AuthUser>> {

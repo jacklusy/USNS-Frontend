@@ -5,6 +5,8 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from "axios";
 import { env } from "@/config/env";
+import { mockAuthService } from "@/modules/auth/services/auth.service.mock";
+import { triggerSessionExpired } from "@/lib/session-handler";
 import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import type { AppError, AppErrorCode } from "@/types/error.types";
@@ -65,8 +67,39 @@ function createApiClient(): AxiosInstance {
     headers: { "Content-Type": "application/json" },
   });
 
-  client.interceptors.request.use((config) => {
+  client.interceptors.request.use(async (config) => {
     if (env.isMockMode) {
+      if (isRefreshRequest(config.url)) {
+        const body =
+          typeof config.data === "object" && config.data !== null
+            ? (config.data as { refresh_token?: string })
+            : undefined;
+        const refreshToken =
+          body?.refresh_token ?? tokenStorage.getRefreshToken() ?? "";
+
+        try {
+          const response = await mockAuthService.refreshTokens(refreshToken);
+          const payload = response.data;
+          config.adapter = () =>
+            Promise.resolve({
+              data: { data: payload },
+              status: 200,
+              statusText: "OK",
+              headers: {},
+              config,
+              request: {},
+            });
+        } catch {
+          tokenStorage.clearTokens();
+          triggerSessionExpired();
+          return Promise.reject({
+            code: "UNAUTHORIZED",
+            message: "Session expired. Please sign in again.",
+          } satisfies AppError);
+        }
+        return config;
+      }
+
       const mockError: AppError = {
         code: "NETWORK_ERROR",
         message:
@@ -98,8 +131,7 @@ function createApiClient(): AxiosInstance {
         axiosError.response?.status === 401 &&
         originalRequest &&
         !originalRequest._retry &&
-        !isRefreshRequest(originalRequest.url) &&
-        !env.isMockMode
+        !isRefreshRequest(originalRequest.url)
       ) {
         originalRequest._retry = true;
         const refreshToken = tokenStorage.getRefreshToken();
@@ -120,7 +152,11 @@ function createApiClient(): AxiosInstance {
             return client(originalRequest);
           } catch {
             tokenStorage.clearTokens();
+            triggerSessionExpired();
           }
+        } else {
+          tokenStorage.clearTokens();
+          triggerSessionExpired();
         }
       }
 

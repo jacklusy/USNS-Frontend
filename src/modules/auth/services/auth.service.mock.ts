@@ -1,6 +1,12 @@
 import { MockServiceBase } from "@/lib/mock-service-base";
 import {
+  DEMO_ACCESS_TOKEN_SESSION_EXPIRED,
+  DEMO_REFRESH_TOKEN_SESSION_EXPIRED,
+} from "@/constants/auth-tokens.constants";
+import {
   MOCK_AUTH_USERS,
+  MOCK_ACCESS_TOKEN_PREFIX,
+  MOCK_REFRESH_TOKEN_PREFIX,
   MOCK_RESET_TOKENS,
   buildMockLoginResponse,
 } from "@/mock/auth/auth.mock";
@@ -8,6 +14,7 @@ import type { ApiResponse } from "@/types/api.types";
 import type { AppError } from "@/types/error.types";
 import { tokenStorage } from "@/utils/token-storage";
 import type {
+  AuthTokens,
   AuthUser,
   ForgotPasswordInput,
   LoginCredentials,
@@ -49,13 +56,36 @@ export class MockAuthService extends MockServiceBase implements IAuthService {
     tokenStorage.clearTokens();
   }
 
+  async refreshTokens(refreshToken: string): Promise<ApiResponse<AuthTokens>> {
+    await this.delay(250);
+    if (refreshToken === DEMO_REFRESH_TOKEN_SESSION_EXPIRED) {
+      throw unauthorized("Session expired. Please sign in again.");
+    }
+    const userId = refreshToken.replace(MOCK_REFRESH_TOKEN_PREFIX, "");
+    const user = Object.values(MOCK_AUTH_USERS).find(
+      (record) => record.user.id === userId,
+    )?.user;
+    if (!user) {
+      throw unauthorized("Session expired. Please sign in again.");
+    }
+    return {
+      data: {
+        access_token: `${MOCK_ACCESS_TOKEN_PREFIX}${user.id}`,
+        refresh_token: `${MOCK_REFRESH_TOKEN_PREFIX}${user.id}`,
+      },
+    };
+  }
+
   async getMe(): Promise<ApiResponse<AuthUser>> {
     await this.delay(200);
     const accessToken = tokenStorage.getAccessToken();
     if (!accessToken) {
       throw unauthorized("Session expired. Please sign in again.");
     }
-    const userId = accessToken.replace("mock_access_", "");
+    if (accessToken === DEMO_ACCESS_TOKEN_SESSION_EXPIRED) {
+      throw unauthorized("Session expired. Please sign in again.");
+    }
+    const userId = accessToken.replace(MOCK_ACCESS_TOKEN_PREFIX, "");
     const user = Object.values(MOCK_AUTH_USERS).find(
       (record) => record.user.id === userId,
     )?.user;

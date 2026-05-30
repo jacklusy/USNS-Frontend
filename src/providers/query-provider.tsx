@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { redirectToAuthError } from "@/lib/auth-error-router";
 import { createQueryClient } from "@/lib/query-client";
 import { showQueryErrorToast } from "@/hooks/useToast";
 
@@ -13,6 +14,10 @@ interface QueryProviderProps {
 export function QueryProvider({ children }: QueryProviderProps) {
   const [queryClient] = useState(() =>
     createQueryClient((error) => {
+      if (error.code === "UNAUTHORIZED") {
+        redirectToAuthError("unauthorized");
+        return;
+      }
       showQueryErrorToast(error.message);
     }),
   );

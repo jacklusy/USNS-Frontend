@@ -1,5 +1,6 @@
 import type { ApiResponse } from "@/types/api.types";
 import type {
+  AuthTokens,
   ForgotPasswordInput,
   LoginCredentials,
   LoginResponse,
@@ -11,6 +12,7 @@ import type {
 export interface IAuthService {
   login(credentials: LoginCredentials): Promise<ApiResponse<LoginResponse>>;
   logout(): Promise<void>;
+  refreshTokens(refreshToken: string): Promise<ApiResponse<AuthTokens>>;
   getMe(): Promise<ApiResponse<AuthUser>>;
   forgotPassword(input: ForgotPasswordInput): Promise<ApiResponse<null>>;
   validateResetToken(

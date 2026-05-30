@@ -1,6 +1,7 @@
 "use client";
 
 import { ToastContainer } from "@/components/shared/ToastContainer";
+import { AuthNavigationBootstrap } from "./auth-navigation-bootstrap";
 import { QueryProvider } from "./query-provider";
 
 interface AppProvidersProps {
@@ -10,6 +11,7 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <QueryProvider>
+      <AuthNavigationBootstrap />
       {children}
       <ToastContainer />
     </QueryProvider>

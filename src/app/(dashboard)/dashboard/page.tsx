@@ -8,23 +8,16 @@ export default function DashboardPage() {
   const { data, isLoading, isError } = useDashboardStats();
 
   return (
-    <div className="flex min-h-full flex-1 flex-col bg-surface">
-      <a href="#main" className="skip-link">
-        Skip to content
-      </a>
-      <main
-        id="main"
-        className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-8 md:px-8"
-      >
-        <h1 className="text-[36px] font-semibold leading-[1.1] tracking-[-0.015em] text-foreground md:text-[48px]">
-          Dashboard
-        </h1>
-        {user ? (
-          <p className="mt-2 text-[15px] text-muted-fg">
-            Welcome back, {user.name}.
-          </p>
-        ) : null}
-        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mx-auto w-full max-w-[1440px]">
+      <h1 className="text-[36px] font-semibold leading-[1.1] tracking-[-0.015em] text-foreground md:text-[48px]">
+        Dashboard
+      </h1>
+      {user ? (
+        <p className="mt-2 text-[15px] text-muted-fg">
+          Welcome back, {user.name}.
+        </p>
+      ) : null}
+      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {isLoading ? (
             <div
               className="col-span-full animate-pulse rounded-lg border border-border bg-surface-elevated p-6"
@@ -57,8 +50,7 @@ export default function DashboardPage() {
               />
             </>
           ) : null}
-        </section>
-      </main>
+      </section>
     </div>
   );
 }

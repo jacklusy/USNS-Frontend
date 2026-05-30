@@ -1,9 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DEMO_ACCESS_TOKEN_SESSION_EXPIRED } from "@/constants/auth-tokens.constants";
+import { triggerSessionExpired } from "@/lib/session-handler";
 import { authService } from "../services";
 import { useAuthStore } from "@/store/auth.slice";
 import { tokenStorage } from "@/utils/token-storage";
+import type { AppError } from "@/types/error.types";
+
+function isAppError(value: unknown): value is AppError {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "code" in value &&
+    "message" in value
+  );
+}
 export function useAuth() {
   const accessToken = useAuthStore((s) => s.accessToken);
   const user = useAuthStore((s) => s.user);
@@ -27,6 +39,14 @@ export function useAuth() {
         return;
       }
 
+      if (storedToken === DEMO_ACCESS_TOKEN_SESSION_EXPIRED) {
+        if (!cancelled) {
+          triggerSessionExpired();
+          setIsHydrated(true);
+        }
+        return;
+      }
+
       const current = useAuthStore.getState();
       if (current.accessToken && current.user) {
         if (!cancelled) setIsHydrated(true);
@@ -42,8 +62,18 @@ export function useAuth() {
             user: response.data,
           });
         }
-      } catch {
-        if (!cancelled) clearSession();
+      } catch (error) {
+        if (!cancelled) {
+          if (
+            isAppError(error) &&
+            error.code === "UNAUTHORIZED" &&
+            storedToken === DEMO_ACCESS_TOKEN_SESSION_EXPIRED
+          ) {
+            triggerSessionExpired();
+          } else {
+            clearSession();
+          }
+        }
       } finally {
         if (!cancelled) setIsHydrated(true);
       }
