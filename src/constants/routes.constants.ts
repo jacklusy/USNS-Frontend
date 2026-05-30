@@ -5,6 +5,7 @@ export const ROUTES = {
   RESET_PASSWORD: "/reset-password",
   DASHBOARD: "/dashboard",
   SETTINGS: "/settings",
+  PROFILE: "/profile",
   SESSION_EXPIRED: "/session-expired",
   ERRORS_UNAUTHORIZED: "/errors/unauthorized",
   ERRORS_FORBIDDEN: "/errors/forbidden",

@@ -47,6 +47,16 @@ Open [http://localhost:3000](http://localhost:3000).
 | Expired reset link | `/reset-password?token=expired_reset_token` |
 | Session expired | Set access token to `mock_access_session_expired` in devtools, then reload a protected page |
 
+### Dashboard shell (authenticated layout)
+
+| Behavior | Notes |
+| --- | --- |
+| Mobile (&lt;1024px) | Hamburger opens a 280px navigation drawer; backdrop and Escape close it |
+| Desktop (≥1024px) | Sidebar 240px expanded or 64px collapsed; preference persists in `localStorage` (`usns-ui`) |
+| Navigation | Menu groups and items come from `src/constants/navigation.constants.ts`; items without permission are omitted |
+| Top bar | Sticky header with breadcrumbs, notification unread badge (mock store), role badge, and user menu (profile, settings when allowed, sign out) |
+| RBAC nav demo | `faculty@usns.edu` sees Dashboard only; `president@usns.edu` sees the full filtered menu |
+
 ## Scripts
 
 | Command                | Description                 |

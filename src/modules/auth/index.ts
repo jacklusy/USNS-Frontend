@@ -4,6 +4,7 @@ export { RouteGuard } from "./guards/RouteGuard";
 export { RoleRouteGuard } from "./guards/RoleRouteGuard";
 export { useAuth } from "./hooks/useAuth";
 export { usePermissions } from "./hooks/usePermissions";
+export { useLogout } from "./hooks/useLogout";
 export { useLogin } from "./hooks/useLogin";
 export { useForgotPassword } from "./hooks/useForgotPassword";
 export {
