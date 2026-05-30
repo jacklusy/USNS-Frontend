@@ -4,7 +4,8 @@ import { Inbox } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { ErrorState } from "@/components/shared/ErrorState";
-import { DATA_TABLE_COPY } from "@/constants/data-table.constants";
+import { EMPTY_STATE_COPY } from "@/constants/empty-state.constants";
+import { ERROR_STATE_COPY } from "@/constants/error-state.constants";
 import type {
   DataTableAction,
   DataTableBulkAction,
@@ -39,7 +40,8 @@ interface DataTableProps<TRow extends DataTableRowBase> {
   onExport?: (selectedRows: TRow[]) => void;
   isLoading?: boolean;
   isError?: boolean;
-  errorMessage?: string;
+  errorTitle?: string;
+  errorDescription?: string;
   onRetry?: () => void;
   emptyState?: ReactNode;
   showColumnFilters?: boolean;
@@ -62,7 +64,8 @@ export function DataTable<TRow extends DataTableRowBase>({
   onExport,
   isLoading = false,
   isError = false,
-  errorMessage = "Unable to load table data.",
+  errorTitle = ERROR_STATE_COPY.defaultTitle,
+  errorDescription = ERROR_STATE_COPY.tableLoadError,
   onRetry,
   emptyState,
   showColumnFilters = true,
@@ -144,8 +147,9 @@ export function DataTable<TRow extends DataTableRowBase>({
   const defaultEmpty = (
     <EmptyState
       icon={Inbox}
-      title={DATA_TABLE_COPY.noDataTitle}
-      description={DATA_TABLE_COPY.noDataDescription}
+      title={EMPTY_STATE_COPY.tableNoDataTitle}
+      description={EMPTY_STATE_COPY.tableNoDataDescription}
+      variant="inPage"
     />
   );
 
@@ -171,7 +175,12 @@ export function DataTable<TRow extends DataTableRowBase>({
         />
       ) : null}
       {isError ? (
-        <ErrorState message={errorMessage} onRetry={onRetry} />
+        <ErrorState
+          title={errorTitle}
+          description={errorDescription}
+          variant="inPage"
+          onRetry={onRetry}
+        />
       ) : showEmpty ? (
         emptyState ?? defaultEmpty
       ) : (

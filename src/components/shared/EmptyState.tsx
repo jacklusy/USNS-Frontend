@@ -1,26 +1,38 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
+import type { StateDisplayVariant } from "@/types/state-display.types";
 
 interface EmptyStateProps {
   icon: LucideIcon;
   title: string;
   description: string;
+  variant?: StateDisplayVariant;
   actionLabel?: string;
   onAction?: () => void;
+  action?: ReactNode;
   children?: ReactNode;
 }
+
+const VARIANT_CLASSES: Record<StateDisplayVariant, string> = {
+  inPage: "px-6 py-12",
+  fullPage: "min-h-[50vh] px-6 py-16",
+};
 
 export function EmptyState({
   icon: Icon,
   title,
   description,
+  variant = "inPage",
   actionLabel,
   onAction,
+  action,
   children,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-12 text-center">
+    <div
+      className={`flex flex-col items-center justify-center text-center ${VARIANT_CLASSES[variant]}`}
+    >
       <Icon
         className="h-12 w-12 text-muted-fg"
         strokeWidth={1.75}
@@ -28,7 +40,8 @@ export function EmptyState({
       />
       <h3 className="mt-4 text-[18px] font-semibold text-foreground">{title}</h3>
       <p className="mt-2 max-w-sm text-[13px] text-muted-fg">{description}</p>
-      {actionLabel && onAction ? (
+      {action ? <div className="mt-6">{action}</div> : null}
+      {!action && actionLabel && onAction ? (
         <div className="mt-6">
           <Button type="button" variant="brand" onClick={onAction}>
             {actionLabel}

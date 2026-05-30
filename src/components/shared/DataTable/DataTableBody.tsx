@@ -3,7 +3,7 @@
 import { MoreHorizontal } from "lucide-react";
 import { useId, useRef, useState, useEffect, useCallback } from "react";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { SkeletonTable } from "@/components/ui/loading-skeleton";
 import { DATA_TABLE_COPY } from "@/constants/data-table.constants";
 import { usePermissions } from "@/modules/auth/hooks/usePermissions";
 import type {
@@ -127,27 +127,13 @@ export function DataTableBody<TRow extends DataTableRowBase>({
 
   if (isLoading) {
     return (
-      <tbody>
-        {Array.from({ length: loadingRowCount }).map((_, rowIndex) => (
-          <tr key={rowIndex} className="border-b border-border">
-            {enableSelection ? (
-              <td className="px-2 py-3">
-                <Skeleton className="h-5 w-5" />
-              </td>
-            ) : null}
-            {columns.map((column) => (
-              <td key={column.id} className="px-4 py-3">
-                <Skeleton className="h-4 w-full max-w-[200px]" />
-              </td>
-            ))}
-            {hasActions ? (
-              <td className="px-4 py-3">
-                <Skeleton className="ml-auto h-4 w-8" />
-              </td>
-            ) : null}
-          </tr>
-        ))}
-      </tbody>
+      <SkeletonTable
+        asTableBody
+        columns={columns.length}
+        rows={loadingRowCount}
+        showSelection={enableSelection}
+        showActions={hasActions}
+      />
     );
   }
 

@@ -19,6 +19,16 @@ export const UI_KIT_COPY = {
   confirmDemoTitle: "Delete user?",
   confirmDemoDescription:
     "This action cannot be undone. The user will lose access immediately.",
+  skeletonsTitle: "Loading skeletons",
+  statesTitle: "Empty and error states",
+  paginationTitle: "Pagination",
+  tabsTitle: "Tabs",
+  searchFiltersTitle: "Search and filters",
+  tabsOverviewLabel: "Overview",
+  tabsOverviewBody: "Overview tab content (lazy-loaded on first visit).",
+  tabsDetailsLabel: "Details",
+  tabsDetailsBody: "Details tab content (lazy-loaded on first visit).",
+  tabsDisabledLabel: "Disabled",
 } as const;
 
 export const UI_KIT_ROLE_OPTIONS = [

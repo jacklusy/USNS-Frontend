@@ -80,10 +80,13 @@ Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) an
 | Button, Badge, StatusBadge | `src/components/ui/Button.tsx`, `Badge.tsx`, `StatusBadge.tsx` |
 | Modal, Drawer, ConfirmationDialog | `src/components/ui/Modal.tsx`, `Drawer.tsx`, `ConfirmationDialog.tsx` |
 | DatePicker, DateRangePicker | `src/components/ui/date-picker/` |
-| DataTable, EmptyState, ErrorState | `src/components/shared/DataTable/`, `EmptyState.tsx`, `ErrorState.tsx` |
+| DataTable, Pagination, EmptyState, ErrorState | `src/components/shared/DataTable/`, `Pagination.tsx`, `EmptyState.tsx`, `ErrorState.tsx` |
+| Skeleton suite (base, text, card, table, form) | `src/components/ui/Skeleton.tsx`, `src/components/ui/loading-skeleton/` |
+| Tabs (URL-synced, lazy panels) | `src/components/ui/Tabs.tsx` |
+| GlobalSearch, FilterPanel | `src/components/shared/GlobalSearch/`, `FilterPanel/` |
 | Toast (`useToast`) | `src/hooks/useToast.ts`, `src/components/shared/ToastContainer.tsx` |
 
-Development showcase (authenticated): [http://localhost:3000/dev/ui-kit](http://localhost:3000/dev/ui-kit) — buttons, badges, toasts, overlays, date pickers, forms, selects, and DataTable modes.
+Development showcase (authenticated): [http://localhost:3000/dev/ui-kit](http://localhost:3000/dev/ui-kit) — buttons, badges, skeletons, empty/error states, pagination, tabs, global search, filters, toasts, overlays, date pickers, forms, selects, and DataTable modes.
 
 ## Scripts
 

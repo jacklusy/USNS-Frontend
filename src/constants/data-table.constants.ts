@@ -3,8 +3,6 @@ export const DATA_TABLE_COPY = {
   columnFilterPlaceholder: "Filter…",
   columnsLabel: "Columns",
   exportLabel: "Export",
-  noDataTitle: "No records found",
-  noDataDescription: "Try adjusting your search or filters.",
   selectAllLabel: "Select all rows",
   selectRowLabel: "Select row",
   actionsLabel: "Actions",
