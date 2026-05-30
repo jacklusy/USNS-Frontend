@@ -20,6 +20,13 @@ const eslintConfig = defineConfig([
                 "Import apiClient only from the service layer, not pages or components.",
             },
           ],
+          patterns: [
+            {
+              group: ["@/mock/**"],
+              message:
+                "Import mock data only inside *.service.mock.ts files.",
+            },
+          ],
         },
       ],
     },

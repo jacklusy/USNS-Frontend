@@ -70,9 +70,21 @@ src/
 - Environment variables are read only in `src/config/env.ts`.
 - When `NEXT_PUBLIC_MOCK_MODE=true`, the API client rejects outbound requests; feature services use mock implementations.
 
+## Service layer
+
+Feature services use an interface + mock/real pair resolved by `resolveService()` from `src/lib/service-resolver.ts`. Mock data lives under `src/mock/` and is imported only in `*.service.mock.ts` files.
+
+See [docs/service-layer.md](docs/service-layer.md) for the full pattern. Reference implementation: `src/modules/dashboard/`.
+
+## Data fetching
+
+Server/async data uses **TanStack Query** via hooks in `modules/[feature]/hooks/`. Do not fetch with `useEffect`. Global query defaults and error-toast handling are configured in `src/lib/query-client.ts` and `src/providers/`.
+
 ## Tech stack
 
 - Next.js 16 (App Router)
 - TypeScript (strict)
 - Tailwind CSS v4
 - Axios (HTTP client, prepared for Laravel)
+- Zustand (global UI/auth/notification state)
+- TanStack Query (server/async data fetching)
