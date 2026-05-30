@@ -7,7 +7,7 @@ import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
-import { Input } from "@/components/ui/Input";
+import { PasswordInput } from "@/components/ui/inputs";
 import { ROUTES } from "@/constants/routes.constants";
 import type { AppError } from "@/types/error.types";
 import {
@@ -80,14 +80,12 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       ) : null}
 
       <FormField
-        id="new-password"
+        name="password"
         label="New password"
         required
         error={errors.password?.message}
       >
-        <Input
-          id="new-password"
-          type="password"
+        <PasswordInput
           autoComplete="new-password"
           aria-required="true"
           aria-invalid={Boolean(errors.password)}
@@ -99,14 +97,12 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       <PasswordStrengthMeter password={passwordValue} />
 
       <FormField
-        id="confirm-password"
+        name="confirmPassword"
         label="Confirm password"
         required
         error={errors.confirmPassword?.message}
       >
-        <Input
-          id="confirm-password"
-          type="password"
+        <PasswordInput
           autoComplete="new-password"
           aria-required="true"
           aria-invalid={Boolean(errors.confirmPassword)}

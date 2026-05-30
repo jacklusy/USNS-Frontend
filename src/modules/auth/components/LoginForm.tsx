@@ -7,7 +7,7 @@ import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
-import { Input } from "@/components/ui/Input";
+import { EmailInput, PasswordInput } from "@/components/ui/inputs";
 import { AUTH_COPY } from "@/constants/auth.constants";
 import { ROUTES } from "@/constants/routes.constants";
 import type { AppError } from "@/types/error.types";
@@ -72,14 +72,12 @@ export function LoginForm() {
       ) : null}
 
       <FormField
-        id="email"
+        name="email"
         label="Email address"
         required
         error={errors.email?.message}
       >
-        <Input
-          id="email"
-          type="email"
+        <EmailInput
           autoComplete="email"
           aria-required="true"
           aria-invalid={Boolean(errors.email)}
@@ -89,14 +87,12 @@ export function LoginForm() {
       </FormField>
 
       <FormField
-        id="password"
+        name="password"
         label="Password"
         required
         error={errors.password?.message}
       >
-        <Input
-          id="password"
-          type="password"
+        <PasswordInput
           autoComplete="current-password"
           aria-required="true"
           aria-invalid={Boolean(errors.password)}

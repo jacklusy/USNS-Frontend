@@ -2,30 +2,39 @@ import { AlertCircle } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface FormFieldProps {
-  id: string;
+  name: string;
   label: string;
   required?: boolean;
+  helpText?: string;
   helperText?: string;
   error?: string;
   children: ReactNode;
+  id?: string;
 }
 
 export function FormField({
-  id,
+  name,
   label,
   required = false,
+  helpText,
   helperText,
   error,
   children,
+  id,
 }: FormFieldProps) {
-  const errorId = error ? `${id}-error` : undefined;
-  const helperId = helperText ? `${id}-helper` : undefined;
+  const fieldId = id ?? name;
+  const resolvedHelp = helpText ?? helperText;
+  const errorId = error ? `${fieldId}-error` : undefined;
+  const helperId = resolvedHelp ? `${fieldId}-helper` : undefined;
   const describedBy =
     [errorId, helperId].filter(Boolean).join(" ") || undefined;
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-[13px] font-medium text-foreground">
+      <label
+        htmlFor={fieldId}
+        className="text-[13px] font-medium text-foreground"
+      >
         {label}
         {required ? (
           <span className="text-danger" aria-hidden="true">
@@ -35,9 +44,9 @@ export function FormField({
         ) : null}
       </label>
       <div aria-describedby={describedBy}>{children}</div>
-      {helperText && !error ? (
+      {resolvedHelp && !error ? (
         <p id={helperId} className="text-[13px] text-muted-fg">
-          {helperText}
+          {resolvedHelp}
         </p>
       ) : null}
       {error ? (

@@ -69,6 +69,18 @@ Open [http://localhost:3000](http://localhost:3000).
 | Announcement banner | Critical unread banner on dashboard; dismiss persists for the browser session |
 | Announcements center | `/announcements` list and `/announcements/[id]` detail; read state in session storage |
 
+### UI component kit (EPIC-05)
+
+Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).
+
+| Component | Path |
+| --- | --- |
+| FormField + TextInput, EmailInput, PasswordInput, NumberInput, TextareaInput | `src/components/ui/FormField.tsx`, `src/components/ui/inputs/` |
+| SingleSelect, MultiSelect, Combobox | `src/components/ui/select/` |
+| DataTable | `src/components/shared/DataTable/` |
+
+Development showcase (authenticated): [http://localhost:3000/dev/ui-kit](http://localhost:3000/dev/ui-kit) — forms, selects with React Hook Form, and DataTable client/server modes.
+
 ## Scripts
 
 | Command                | Description                 |
