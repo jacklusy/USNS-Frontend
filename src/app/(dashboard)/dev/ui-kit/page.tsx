@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,6 +15,13 @@ import {
   TextInput,
 } from "@/components/ui/inputs";
 import { Combobox, MultiSelect, SingleSelect } from "@/components/ui/select";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { Modal } from "@/components/ui/Modal";
+import { Drawer } from "@/components/ui/Drawer";
+import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
+import { DatePicker, DateRangePicker } from "@/components/ui/date-picker";
 import {
   UI_KIT_COPY,
   UI_KIT_DEPARTMENT_OPTIONS,
@@ -25,12 +32,18 @@ import { UI_KIT_DEMO_USERS } from "@/constants/ui-kit-demo-users.constants";
 import type { UiKitUserRow } from "@/types/ui-kit.types";
 import { PERMISSIONS } from "@/types/permission.types";
 import type { DataTableColumn } from "@/types/data-table.types";
+import type { DateRangeValue } from "@/types/date-picker.types";
 
 const selectDemoSchema = z.object({
   role: z.string().min(1, "Select a role"),
 });
 
+const dateDemoSchema = z.object({
+  startDate: z.date({ error: "Start date is required" }),
+});
+
 type SelectDemoFormData = z.infer<typeof selectDemoSchema>;
+type DateDemoFormData = z.infer<typeof dateDemoSchema>;
 
 const userColumns: DataTableColumn<UiKitUserRow>[] = [
   {
@@ -64,7 +77,7 @@ const userColumns: DataTableColumn<UiKitUserRow>[] = [
   {
     id: "status",
     header: "Status",
-    accessorKey: "status",
+    cell: (row) => <StatusBadge status={row.status} />,
     sortable: true,
   },
 ];
@@ -78,11 +91,23 @@ export default function UiKitPage() {
   const [serverPage, setServerPage] = useState(1);
   const [tableLoading, setTableLoading] = useState(false);
   const [tableError, setTableError] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [singleDate, setSingleDate] = useState<Date | null>(null);
+  const [dateRange, setDateRange] = useState<DateRangeValue>({
+    start: null,
+    end: null,
+  });
   const perPage = 8;
 
   const selectForm = useForm<SelectDemoFormData>({
     resolver: zodResolver(selectDemoSchema),
     defaultValues: { role: "" },
+  });
+
+  const dateForm = useForm<DateDemoFormData>({
+    resolver: zodResolver(dateDemoSchema),
   });
 
   const serverSlice = useMemo(() => {
@@ -98,6 +123,257 @@ export default function UiKitPage() {
         </h1>
         <p className="mt-2 text-[15px] text-muted-fg">{UI_KIT_COPY.description}</p>
       </header>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-[24px] font-semibold text-foreground">
+          {UI_KIT_COPY.buttonsTitle}
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="primary">Primary</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="destructive">Destructive</Button>
+          <Button variant="primary" size="sm">
+            Small
+          </Button>
+          <Button variant="primary" size="lg">
+            Large
+          </Button>
+          <Button
+            variant="primary"
+            leadingIcon={<Plus className="h-5 w-5" strokeWidth={1.75} />}
+          >
+            With icon
+          </Button>
+          <Button variant="primary" loading>
+            Loading
+          </Button>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-[24px] font-semibold text-foreground">
+          {UI_KIT_COPY.badgesTitle}
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="default">Default</Badge>
+          <Badge variant="success">Success</Badge>
+          <Badge variant="warning">Warning</Badge>
+          <Badge variant="error">Error</Badge>
+          <Badge variant="info">Info</Badge>
+          <StatusBadge status="active" />
+          <StatusBadge status="pending" />
+          <StatusBadge status="inactive" />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-[24px] font-semibold text-foreground">
+          {UI_KIT_COPY.toastsTitle}
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast.success({ title: "Saved", description: "Changes applied." });
+            }}
+          >
+            Success
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast.error({ title: "Error", description: "Something failed." });
+            }}
+          >
+            Error
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast.warning({ title: "Warning", description: "Review required." });
+            }}
+          >
+            Warning
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast.info({ title: "Info", description: "New data available." });
+            }}
+          >
+            Info
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast.success({
+                title: "With action",
+                action: {
+                  label: "Undo",
+                  onClick: () => {
+                    toast.info({ title: "Undone" });
+                  },
+                },
+              });
+            }}
+          >
+            With action
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              for (let index = 0; index < 5; index += 1) {
+                toast.info({
+                  title: `Queued toast ${index + 1}`,
+                  description: "Max visible is 3; rest queue.",
+                });
+              }
+            }}
+          >
+            Queue test (5)
+          </Button>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-[24px] font-semibold text-foreground">
+          {UI_KIT_COPY.overlaysTitle}
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="secondary" size="sm" onClick={() => setModalOpen(true)}>
+            Open modal
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => setDrawerOpen(true)}>
+            Open drawer
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => setConfirmOpen(true)}
+          >
+            Open confirm
+          </Button>
+        </div>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title={UI_KIT_COPY.modalDemoTitle}
+          description={UI_KIT_COPY.modalDemoBody}
+          footer={
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setModalOpen(false)}>
+                Close
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  setModalOpen(false);
+                  setConfirmOpen(true);
+                }}
+              >
+                Delete…
+              </Button>
+            </div>
+          }
+        >
+          <p className="text-[15px] text-muted-fg">
+            Use modals for focused create/edit flows. Focus is trapped until closed.
+          </p>
+        </Modal>
+        <Drawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          title={UI_KIT_COPY.drawerDemoTitle}
+          description={UI_KIT_COPY.drawerDemoBody}
+          footer={
+            <Button variant="primary" onClick={() => setDrawerOpen(false)}>
+              Done
+            </Button>
+          }
+        >
+          <p className="text-[15px] text-muted-fg">
+            Drawers work well for filters and record detail without leaving the page.
+          </p>
+        </Drawer>
+        <ConfirmationDialog
+          open={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={() => {
+            setConfirmOpen(false);
+            toast.success({ title: "Confirmed", description: "Action completed." });
+          }}
+          title={UI_KIT_COPY.confirmDemoTitle}
+          description={UI_KIT_COPY.confirmDemoDescription}
+          confirmLabel="Delete"
+          cancelLabel="Cancel"
+          destructive
+        />
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-[24px] font-semibold text-foreground">
+          {UI_KIT_COPY.datesTitle}
+        </h2>
+        <div className="grid max-w-md gap-4">
+          <FormField name="standalone-date" label="Date picker">
+            <DatePicker
+              id="standalone-date"
+              value={singleDate}
+              onChange={setSingleDate}
+              minDate={new Date(2026, 0, 1)}
+              maxDate={new Date(2026, 11, 31)}
+            />
+          </FormField>
+          <FormField name="standalone-range" label="Date range picker">
+            <DateRangePicker
+              id="standalone-range"
+              value={dateRange}
+              onChange={setDateRange}
+            />
+          </FormField>
+          <form
+            className="flex flex-col gap-3"
+            onSubmit={dateForm.handleSubmit((data) => {
+              toast.success({
+                title: "Date saved",
+                description: data.startDate.toLocaleDateString(),
+              });
+            })}
+          >
+            <Controller
+              name="startDate"
+              control={dateForm.control}
+              render={({ field, fieldState }) => (
+                <FormField
+                  name="startDate"
+                  label="RHF + DatePicker"
+                  required
+                  error={fieldState.error?.message}
+                >
+                  <DatePicker
+                    id="startDate"
+                    value={field.value ?? null}
+                    onChange={field.onChange}
+                    hasError={Boolean(fieldState.error)}
+                  />
+                </FormField>
+              )}
+            />
+            <Button type="submit" variant="primary" size="sm">
+              Submit date
+            </Button>
+          </form>
+        </div>
+      </section>
 
       <section className="flex flex-col gap-4">
         <h2 className="text-[24px] font-semibold text-foreground">

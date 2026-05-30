@@ -1,15 +1,25 @@
-import { useToastStore, type ToastVariant } from "@/store/toast.slice";
+import {
+  useToastStore,
+  type ToastVariant,
+} from "@/store/toast.slice";
 
-interface ToastInput {
+export interface ToastInput {
   title: string;
   description?: string;
+  durationMs?: number;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
-function push(variant: ToastVariant, input: ToastInput): void {
-  useToastStore.getState().addToast({
+function push(variant: ToastVariant, input: ToastInput): string {
+  return useToastStore.getState().addToast({
     variant,
     title: input.title,
     description: input.description,
+    durationMs: input.durationMs,
+    action: input.action,
   });
 }
 

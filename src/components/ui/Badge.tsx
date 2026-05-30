@@ -1,27 +1,26 @@
 import type { ReactNode } from "react";
-
-type BadgeVariant = "brand" | "neutral" | "danger";
+import {
+  BADGE_VARIANT_CLASSES,
+  resolveBadgeVariant,
+  type BadgeVariantInput,
+} from "@/constants/badge.constants";
 
 interface BadgeProps {
-  variant?: BadgeVariant;
+  variant?: BadgeVariantInput;
   children: ReactNode;
   className?: string;
 }
 
-const variantClasses: Record<BadgeVariant, string> = {
-  brand: "bg-usns-green-light text-brand",
-  neutral: "bg-surface-elevated text-muted-fg border border-border",
-  danger: "bg-danger/10 text-danger",
-};
-
 export function Badge({
-  variant = "neutral",
+  variant = "default",
   children,
   className = "",
 }: BadgeProps) {
+  const resolved = resolveBadgeVariant(variant);
+
   return (
     <span
-      className={`inline-flex min-h-5 items-center justify-center rounded-pill px-2 text-[12px] font-medium leading-none ${variantClasses[variant]} ${className}`}
+      className={`inline-flex min-h-5 items-center justify-center rounded-pill px-2 text-[12px] font-medium leading-none ${BADGE_VARIANT_CLASSES[resolved]} ${className}`}
     >
       {children}
     </span>
