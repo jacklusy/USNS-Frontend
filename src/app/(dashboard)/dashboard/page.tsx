@@ -1,74 +1,122 @@
 "use client";
 
-import { useDashboardStats } from "@/modules/dashboard/hooks/useDashboardStats";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { AnnouncementBanner } from "@/modules/dashboard/components/AnnouncementBanner";
+import { ActivityFeed } from "@/modules/dashboard/components/ActivityFeed";
+import { ChartsSectionSkeleton } from "@/modules/dashboard/components/ChartsSectionSkeleton";
+import { DashboardSection } from "@/modules/dashboard/components/DashboardSection";
+import { QuickActions } from "@/modules/dashboard/components/QuickActions";
+import { StatCard } from "@/modules/dashboard/components/StatCard";
+import { useDashboardAnalytics } from "@/modules/dashboard/hooks/useDashboardAnalytics";
+import { useDashboardKpis } from "@/modules/dashboard/hooks/useDashboardKpis";
+import { DASHBOARD_SECTION_COPY } from "@/constants/dashboard.constants";
+import { Skeleton } from "@/components/ui/Skeleton";
 
-export default function DashboardPage() {
-  const { user } = useAuth();
-  const { data, isLoading, isError } = useDashboardStats();
+const DashboardChartsSection = dynamic(
+  () =>
+    import("@/modules/dashboard/components/DashboardChartsSection").then(
+      (mod) => mod.DashboardChartsSection,
+    ),
+  {
+    ssr: false,
+    loading: () => <ChartsSectionSkeleton />,
+  },
+);
 
+function KpiGridSkeleton() {
   return (
-    <div className="mx-auto w-full max-w-[1440px]">
-      <h1 className="text-[36px] font-semibold leading-[1.1] tracking-[-0.015em] text-foreground md:text-[48px]">
-        Dashboard
-      </h1>
-      {user ? (
-        <p className="mt-2 text-[15px] text-muted-fg">
-          Welcome back, {user.name}.
-        </p>
-      ) : null}
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {isLoading ? (
-            <div
-              className="col-span-full animate-pulse rounded-lg border border-border bg-surface-elevated p-6"
-              aria-busy="true"
-              aria-label="Loading dashboard metrics"
-            >
-              <div className="h-4 w-1/3 rounded-md bg-border" />
-              <div className="mt-4 h-8 w-1/2 rounded-md bg-border" />
-            </div>
-          ) : null}
-          {isError ? (
-            <p className="text-[15px] text-danger" role="alert">
-              Unable to load dashboard metrics.
-            </p>
-          ) : null}
-          {data?.data ? (
-            <>
-              <MetricCard label="Total users" value={data.data.totalUsers} />
-              <MetricCard
-                label="Active sessions"
-                value={data.data.activeSessions}
-              />
-              <MetricCard
-                label="Pending approvals"
-                value={data.data.pendingApprovals}
-              />
-              <MetricCard
-                label="System alerts"
-                value={data.data.systemAlerts}
-              />
-            </>
-          ) : null}
-      </section>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <StatCard
+          key={index}
+          title=""
+          value={0}
+          trend="neutral"
+          changePercent={0}
+          icon="users"
+          isLoading
+        />
+      ))}
     </div>
   );
 }
 
-interface MetricCardProps {
-  label: string;
-  value: number;
-}
+export default function DashboardPage() {
+  const { user } = useAuth();
+  const kpisQuery = useDashboardKpis();
+  const analyticsQuery = useDashboardAnalytics();
 
-function MetricCard({ label, value }: MetricCardProps) {
+  const kpis = kpisQuery.data?.data ?? [];
+
   return (
-    <div className="rounded-lg border border-border bg-surface-elevated p-5">
-      <p className="text-[12px] font-medium uppercase tracking-widest text-muted-fg">
-        {label}
-      </p>
-      <p className="mt-2 font-mono text-3xl font-medium tabular-nums text-foreground">
-        {value.toLocaleString()}
-      </p>
+    <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8">
+      <AnnouncementBanner />
+
+      <header>
+        <h1 className="text-[36px] font-semibold leading-[1.1] tracking-[-0.015em] text-foreground md:text-[48px]">
+          Dashboard
+        </h1>
+        {user ? (
+          <p className="mt-2 text-[15px] text-muted-fg">
+            Welcome back, {user.name}.
+          </p>
+        ) : (
+          <Skeleton className="mt-2 h-5 w-48" />
+        )}
+      </header>
+
+      <DashboardSection
+        title={DASHBOARD_SECTION_COPY.kpis.title}
+        description={DASHBOARD_SECTION_COPY.kpis.description}
+        isLoading={kpisQuery.isLoading}
+        isError={kpisQuery.isError}
+        errorMessage={DASHBOARD_SECTION_COPY.kpis.error}
+        onRefresh={() => {
+          void kpisQuery.refetch();
+        }}
+        isRefreshing={kpisQuery.isFetching}
+        loadingFallback={<KpiGridSkeleton />}
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {kpis.map((kpi) => (
+            <StatCard
+              key={kpi.id}
+              title={kpi.title}
+              value={kpi.value}
+              trend={kpi.trend}
+              changePercent={kpi.changePercent}
+              icon={kpi.icon}
+            />
+          ))}
+        </div>
+      </DashboardSection>
+
+      <DashboardSection
+        title={DASHBOARD_SECTION_COPY.analytics.title}
+        description={DASHBOARD_SECTION_COPY.analytics.description}
+        isLoading={analyticsQuery.isLoading}
+        isError={analyticsQuery.isError}
+        errorMessage={DASHBOARD_SECTION_COPY.analytics.error}
+        onRefresh={() => {
+          void analyticsQuery.refetch();
+        }}
+        isRefreshing={analyticsQuery.isFetching}
+        loadingFallback={<ChartsSectionSkeleton />}
+      >
+        {analyticsQuery.data?.data ? (
+          <DashboardChartsSection analytics={analyticsQuery.data.data} />
+        ) : null}
+      </DashboardSection>
+
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <ActivityFeed />
+        </div>
+        <div>
+          <QuickActions />
+        </div>
+      </div>
     </div>
   );
 }

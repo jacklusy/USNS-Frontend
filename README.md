@@ -57,6 +57,16 @@ Open [http://localhost:3000](http://localhost:3000).
 | Top bar | Sticky header with breadcrumbs, notification unread badge (mock store), role badge, and user menu (profile, settings when allowed, sign out) |
 | RBAC nav demo | `faculty@usns.edu` sees Dashboard only; `president@usns.edu` sees the full filtered menu |
 
+### Dashboard overview (`/dashboard`)
+
+| Feature | Notes |
+| --- | --- |
+| KPI cards | Trend indicators and per-section **Refresh** |
+| Analytics | Line, bar, and donut charts (lazy-loaded Recharts) |
+| Activity feed | Recent events with relative timestamps |
+| Quick actions | Filtered by role permissions |
+| Announcement | Critical banner; dismiss persists for the browser session |
+
 ## Scripts
 
 | Command                | Description                 |
