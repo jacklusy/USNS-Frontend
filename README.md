@@ -147,6 +147,24 @@ Mock data in `src/mock/faculty/` and `src/mock/staff/`; services in `src/modules
 
 Department detail staff count includes dashboard users plus administrative staff assigned to that department.
 
+### System settings (EPIC-10)
+
+Mock data in `src/mock/settings/`; services in `src/modules/settings/`.
+
+| Account | Settings access |
+| --- | --- |
+| `dba@usns.edu` | All tabs including **Operations** (backup, maintenance) |
+| `admin@usns.edu` | General, Mail, Storage, Security, Features, Email templates — no Operations tab |
+| `dean@usns.edu` | Access denied at `/settings` |
+
+| Tab | Feature |
+| --- | --- |
+| General / Mail / Storage / Security / Features | Section forms with confirm-before-save; sensitive fields use masked `PasswordInput` |
+| Operations (DBA only) | Backup schedule, manual backup with progress, history table, maintenance mode with double confirmation |
+| Email templates | List, edit drawer (monospace body), variable reference, preview modal, reset to default |
+
+When maintenance mode is enabled, a warning banner appears on all dashboard pages.
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

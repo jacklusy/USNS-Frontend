@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopBar } from "./DashboardTopBar";
+import { MaintenanceBanner } from "@/modules/settings";
 import { useUiStore } from "@/store/ui.slice";
 
 interface DashboardLayoutProps {
@@ -32,6 +33,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <DashboardSidebar variant="mobile" showLabels />
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardTopBar />
+        <MaintenanceBanner />
         <main id="main" className="flex-1 overflow-y-auto p-6">
           {children}
         </main>

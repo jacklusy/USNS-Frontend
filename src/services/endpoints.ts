@@ -105,6 +105,16 @@ export const ENDPOINTS = {
     storage: "/settings/storage",
     security: "/settings/security",
     features: "/settings/features",
+    backup: "/settings/backup",
+    backupTrigger: "/settings/backup/trigger",
+    backupHistory: "/settings/backup/history",
+    maintenance: "/settings/maintenance",
+    emailTemplates: "/settings/email-templates",
+    emailTemplateById: (id: string) => `/settings/email-templates/${id}`,
+    emailTemplatePreview: (id: string) =>
+      `/settings/email-templates/${id}/preview`,
+    emailTemplateReset: (id: string) =>
+      `/settings/email-templates/${id}/reset`,
   },
   notifications: {
     list: "/notifications",
