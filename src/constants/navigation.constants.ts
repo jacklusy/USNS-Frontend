@@ -9,7 +9,8 @@ export type NavIconKey =
   | "reports"
   | "users"
   | "audit"
-  | "bell";
+  | "bell"
+  | "inbox";
 
 export interface NavItem {
   href?: string;
@@ -41,6 +42,12 @@ export const DASHBOARD_NAV_GROUPS: readonly NavGroup[] = [
         href: ROUTES.ANNOUNCEMENTS,
         label: "Announcements",
         icon: "bell",
+        requiredPermission: PERMISSIONS.notifications.view,
+      },
+      {
+        href: ROUTES.NOTIFICATIONS,
+        label: "Notification center",
+        icon: "inbox",
         requiredPermission: PERMISSIONS.notifications.view,
       },
     ],

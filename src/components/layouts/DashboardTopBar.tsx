@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Menu, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { Badge } from "@/components/ui/Badge";
 import { DropdownMenu, type DropdownMenuItem } from "@/components/ui/DropdownMenu";
@@ -9,7 +9,7 @@ import { ROLE_DISPLAY_LABELS } from "@/constants/roles.constants";
 import { useLogout } from "@/modules/auth/hooks/useLogout";
 import { usePermissions } from "@/modules/auth/hooks/usePermissions";
 import { useAuthStore } from "@/store/auth.slice";
-import { useNotificationStore } from "@/store/notification.slice";
+import { NotificationBellDropdown } from "@/modules/notifications";
 import { useUiStore } from "@/store/ui.slice";
 import { PERMISSIONS } from "@/types/permission.types";
 import { getUserInitials } from "@/utils/user-initials";
@@ -17,7 +17,6 @@ import { getUserInitials } from "@/utils/user-initials";
 export function DashboardTopBar() {
   const user = useAuthStore((s) => s.user);
   const role = useAuthStore((s) => s.role);
-  const unreadCount = useNotificationStore((s) => s.unreadCount);
   const toggleMobileSidebar = useUiStore((s) => s.toggleMobileSidebar);
   const { can } = usePermissions();
   const { logout, isLoggingOut } = useLogout();
@@ -86,22 +85,9 @@ export function DashboardTopBar() {
             >
               <Search className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
             </button>
-            <button
-              type="button"
-              className="relative inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-fg transition-colors hover:bg-usns-green-light hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-              aria-label={
-                unreadCount > 0
-                  ? `Notifications, ${unreadCount} unread`
-                  : "Notifications"
-              }
-            >
-              <Bell className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
-              {unreadCount > 0 ? (
-                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-pill bg-danger px-1 text-[10px] font-medium text-white">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              ) : null}
-            </button>
+            {can(PERMISSIONS.notifications.view) ? (
+              <NotificationBellDropdown />
+            ) : null}
             <DropdownMenu
               aria-label="User menu"
               align="right"

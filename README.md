@@ -165,6 +165,24 @@ Mock data in `src/mock/settings/`; services in `src/modules/settings/`.
 
 When maintenance mode is enabled, a warning banner appears on all dashboard pages.
 
+### Notifications center (EPIC-11)
+
+Mock data in `src/mock/notifications/`; services in `src/modules/notifications/`.
+
+| Account | Access |
+| --- | --- |
+| `president@usns.edu` | Full notification center, bell dropdown, preferences |
+| `dba@usns.edu` | Same as president for notifications |
+| `admin@usns.edu` / `dean@usns.edu` | No `notifications.view` — `/notifications` forbidden; no bell |
+
+| Feature | Route / UI |
+| --- | --- |
+| Notification center (NOTIF-01) | `/notifications` — filter by category and read status, mark read/unread, mark all read, delete with confirmation |
+| Preferences (NOTIF-02) | `/notifications?tab=preferences` — per-type in-app and email toggles, reset to defaults |
+| Bell dropdown (NOTIF-03) | Top bar — up to 5 recent unread, mark-as-read per item, link to full center |
+
+Unread count on the bell syncs from the notification store, hydrated on dashboard load and updated after mutations.
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

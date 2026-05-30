@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   Bell,
   ChevronDown,
+  Inbox,
   FileText,
   LayoutDashboard,
   PanelLeftClose,
@@ -38,6 +39,7 @@ const NAV_ICON_MAP: Record<NavIconKey, LucideIcon> = {
   users: Users,
   audit: ScrollText,
   bell: Bell,
+  inbox: Inbox,
 };
 
 interface DashboardSidebarProps {

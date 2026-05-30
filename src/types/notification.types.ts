@@ -1,7 +1,6 @@
-export interface NotificationItem {
-  id: string;
-  title: string;
-  body: string;
-  read: boolean;
-  createdAt: string;
-}
+export type {
+  Notification,
+  NotificationItem,
+  NotificationCategory,
+  NotificationType,
+} from "@/modules/notifications/types/notification.types";

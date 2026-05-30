@@ -119,8 +119,13 @@ export const ENDPOINTS = {
   notifications: {
     list: "/notifications",
     byId: (id: string) => `/notifications/${id}`,
+    recent: "/notifications/recent",
     markRead: (id: string) => `/notifications/${id}/read`,
+    markUnread: (id: string) => `/notifications/${id}/unread`,
     markAllRead: "/notifications/read-all",
+    delete: (id: string) => `/notifications/${id}`,
+    preferences: "/notifications/preferences",
+    preferencesReset: "/notifications/preferences/reset",
   },
   audit: {
     list: "/audit-logs",

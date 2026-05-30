@@ -10,6 +10,7 @@ export const ROUTES = {
   ERRORS_UNAUTHORIZED: "/errors/unauthorized",
   ERRORS_FORBIDDEN: "/errors/forbidden",
   ANNOUNCEMENTS: "/announcements",
+  NOTIFICATIONS: "/notifications",
   USERS: "/users",
   ROLES: "/roles",
   COLLEGES: "/colleges",
