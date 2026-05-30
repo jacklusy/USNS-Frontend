@@ -1,5 +1,16 @@
 import { MockServiceBase } from "@/lib/mock-service-base";
 import {
+  getAccountStatsForUser,
+  seedAccountStatsForUser,
+} from "@/mock/users/user-account-stats.mock";
+import {
+  appendUserAuditEntry,
+  buildStatusAuditDescription,
+  listUserAuditEntries,
+  statusActionToAuditAction,
+  statusActionToAuditType,
+} from "@/mock/users/user-audit.mock";
+import {
   emailExistsInStore,
   filterUsers,
   generateUserId,
@@ -7,16 +18,21 @@ import {
   paginateUsers,
   withDepartmentName,
 } from "@/mock/users/users.mock";
+import { useAuthStore } from "@/store/auth.slice";
 import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
 import type { AppError } from "@/types/error.types";
-import { UserStatus } from "@/types/user.types";
+import type { UserActivityQueryParams } from "../types/user-audit.types";
+import type { UserAuditEntry } from "../types/user-audit.types";
 import type {
   BulkUserStatusAction,
   CreateUserInput,
   ManagedUser,
   UpdateUserInput,
+  UserDetail,
   UserListQueryParams,
+  UserStatusAction,
 } from "../types/user-management.types";
+import { statusFromUserStatusAction } from "../utils/user-status-action";
 import type { IUserService } from "./user.service";
 
 function validationError(details: Record<string, string[]>): AppError {
@@ -42,6 +58,27 @@ function findUser(id: string): ManagedUser | undefined {
   return getUsersStore().find((user) => user.id === id);
 }
 
+function getActorName(): string {
+  return useAuthStore.getState().user?.name ?? "System";
+}
+
+function applyStatusChange(
+  user: ManagedUser,
+  action: UserStatusAction,
+  actorName: string,
+): ManagedUser {
+  const nextStatus = statusFromUserStatusAction(action);
+  const auditAction = statusActionToAuditAction(action);
+  appendUserAuditEntry({
+    userId: user.id,
+    actorName,
+    action: auditAction,
+    actionType: statusActionToAuditType(),
+    description: buildStatusAuditDescription(auditAction, user.fullName),
+  });
+  return { ...user, status: nextStatus };
+}
+
 export class MockUserService extends MockServiceBase implements IUserService {
   async list(
     params: UserListQueryParams,
@@ -60,6 +97,50 @@ export class MockUserService extends MockServiceBase implements IUserService {
     return { data: user };
   }
 
+  async getDetail(id: string): Promise<ApiResponse<UserDetail>> {
+    await this.delay();
+    const user = findUser(id);
+    if (!user) {
+      throw notFound("User not found");
+    }
+    return {
+      data: {
+        ...user,
+        account: getAccountStatsForUser(id),
+      },
+    };
+  }
+
+  async listActivity(
+    userId: string,
+    params?: UserActivityQueryParams,
+  ): Promise<PaginatedResponse<UserAuditEntry>> {
+    await this.delay();
+    if (!findUser(userId)) {
+      throw notFound("User not found");
+    }
+    return listUserAuditEntries(userId, params);
+  }
+
+  async changeStatus(
+    id: string,
+    action: UserStatusAction,
+  ): Promise<ApiResponse<ManagedUser>> {
+    await this.delay(350);
+    const index = findUserIndex(id);
+    if (index < 0) {
+      throw notFound("User not found");
+    }
+    const actorName = getActorName();
+    const updated = applyStatusChange(
+      getUsersStore()[index],
+      action,
+      actorName,
+    );
+    getUsersStore()[index] = updated;
+    return { data: updated, message: "Status updated" };
+  }
+
   async create(input: CreateUserInput): Promise<ApiResponse<ManagedUser>> {
     await this.delay(350);
     if (emailExistsInStore(input.email)) {
@@ -72,12 +153,20 @@ export class MockUserService extends MockServiceBase implements IUserService {
       email: input.email.trim().toLowerCase(),
       role: input.role,
       departmentId: input.departmentId,
-      status: UserStatus.Active,
+      status: statusFromUserStatusAction("activate"),
       createdAt: new Date().toISOString(),
       forcePasswordChange: input.forcePasswordChange,
     });
 
     getUsersStore().unshift(user);
+    seedAccountStatsForUser(user.id);
+    appendUserAuditEntry({
+      userId: user.id,
+      actorName: getActorName(),
+      action: "created",
+      actionType: "created",
+      description: `User account created for ${user.fullName}`,
+    });
     return { data: user, message: "User created" };
   }
 
@@ -126,17 +215,17 @@ export class MockUserService extends MockServiceBase implements IUserService {
     action: BulkUserStatusAction,
   ): Promise<ApiResponse<ManagedUser[]>> {
     await this.delay(400);
-    const nextStatus =
-      action === "activate" ? UserStatus.Active : UserStatus.Inactive;
+    const actorName = getActorName();
     const updated: ManagedUser[] = [];
 
     for (const id of ids) {
       const index = findUserIndex(id);
       if (index < 0) continue;
-      const record = {
-        ...getUsersStore()[index],
-        status: nextStatus,
-      };
+      const record = applyStatusChange(
+        getUsersStore()[index],
+        action,
+        actorName,
+      );
       getUsersStore()[index] = record;
       updated.push(record);
     }

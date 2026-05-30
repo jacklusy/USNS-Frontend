@@ -7,20 +7,38 @@ import { USERS_FILTER_CONFIG } from "@/constants/users-filter.constants";
 import { USERS_COPY } from "@/constants/users.constants";
 import { useFilterUrlState } from "@/hooks/useFilterUrlState";
 import { useToast } from "@/hooks/useToast";
-import { UserStatus } from "@/types/user.types";
 import { useBulkUserActions } from "../hooks/useBulkUserActions";
+import {
+  isAppError,
+  useChangeUserStatus,
+} from "../hooks/useChangeUserStatus";
 import { useDeleteUser } from "../hooks/useDeleteUser";
-import { useUpdateUser } from "../hooks/useUpdateUser";
 import { useUserList } from "../hooks/useUserList";
-import type { ManagedUser } from "../types/user-management.types";
+import type {
+  BulkUserStatusAction,
+  ManagedUser,
+  UserStatusAction,
+} from "../types/user-management.types";
 import { parseUsersFilterValues } from "../utils/parse-users-filters";
+import { statusToastMessage } from "../utils/status-confirm-copy";
 import { CreateUserDrawer } from "./CreateUserDrawer";
 import { EditUserDrawer } from "./EditUserDrawer";
+import { UserStatusChangeDialog } from "./UserStatusChangeDialog";
 import { UsersPageHeader } from "./UsersPageHeader";
 import { UsersTable } from "./UsersTable";
 
 const SEARCH_DEBOUNCE_MS = 300;
 const DEFAULT_PER_PAGE = 10;
+
+interface PendingSingleStatus {
+  user: ManagedUser;
+  action: UserStatusAction;
+}
+
+interface PendingBulkStatus {
+  users: ManagedUser[];
+  action: BulkUserStatusAction;
+}
 
 export function UsersPageContent() {
   const toast = useToast();
@@ -31,13 +49,16 @@ export function UsersPageContent() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [editUserId, setEditUserId] = useState<string | null>(null);
-  const [editMode, setEditMode] = useState<"edit" | "view">("edit");
   const [pendingDeleteUser, setPendingDeleteUser] = useState<ManagedUser | null>(
     null,
   );
   const [pendingBulkDelete, setPendingBulkDelete] = useState<ManagedUser[]>(
     [],
   );
+  const [pendingSingleStatus, setPendingSingleStatus] =
+    useState<PendingSingleStatus | null>(null);
+  const [pendingBulkStatus, setPendingBulkStatus] =
+    useState<PendingBulkStatus | null>(null);
 
   const {
     draftValues,
@@ -48,6 +69,10 @@ export function UsersPageContent() {
     removeAppliedFilter,
     syncDraftFromUrl,
   } = useFilterUrlState({ config: USERS_FILTER_CONFIG });
+
+  const { changeStatus, bulkChangeStatus } = useChangeUserStatus();
+  const deleteMutation = useDeleteUser();
+  const { bulkDelete } = useBulkUserActions();
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -68,10 +93,6 @@ export function UsersPageContent() {
     search: debouncedSearch || undefined,
     ...filterParams,
   });
-
-  const updateMutation = useUpdateUser();
-  const deleteMutation = useDeleteUser();
-  const { bulkStatus, bulkDelete } = useBulkUserActions();
 
   const rows = listQuery.data?.data ?? [];
   const total = listQuery.data?.meta.total ?? 0;
@@ -102,50 +123,62 @@ export function UsersPageContent() {
 
   const openEdit = useCallback((user: ManagedUser) => {
     setEditUserId(user.id);
-    setEditMode("edit");
-  }, []);
-
-  const openView = useCallback((user: ManagedUser) => {
-    setEditUserId(user.id);
-    setEditMode("view");
   }, []);
 
   const closeEditDrawer = useCallback(() => {
     setEditUserId(null);
   }, []);
 
-  const toggleUserStatus = useCallback(
-    (user: ManagedUser) => {
-      const nextStatus =
-        user.status === UserStatus.Active
-          ? UserStatus.Inactive
-          : UserStatus.Active;
-      updateMutation.mutate(
-        {
-          id: user.id,
-          input: {
-            fullName: user.fullName,
-            email: user.email,
-            role: user.role,
-            departmentId: user.departmentId,
-            status: nextStatus,
-            forcePasswordChange: user.forcePasswordChange,
-          },
+  const confirmSingleStatus = useCallback(() => {
+    if (!pendingSingleStatus) return;
+    changeStatus.mutate(
+      {
+        id: pendingSingleStatus.user.id,
+        action: pendingSingleStatus.action,
+      },
+      {
+        onSuccess: () => {
+          toast.success({
+            title: statusToastMessage(pendingSingleStatus.action),
+          });
+          setPendingSingleStatus(null);
         },
-        {
-          onSuccess: () => {
-            toast.success({
-              title:
-                nextStatus === UserStatus.Active
-                  ? USERS_COPY.toastActivated
-                  : USERS_COPY.toastDeactivated,
-            });
-          },
+        onError: (error) => {
+          toast.error({
+            title: isAppError(error)
+              ? error.message
+              : USERS_COPY.toastStatusError,
+          });
         },
-      );
-    },
-    [toast, updateMutation],
-  );
+      },
+    );
+  }, [changeStatus, pendingSingleStatus, toast]);
+
+  const confirmBulkStatus = useCallback(() => {
+    if (!pendingBulkStatus || pendingBulkStatus.users.length === 0) return;
+    const count = pendingBulkStatus.users.length;
+    bulkChangeStatus.mutate(
+      {
+        ids: pendingBulkStatus.users.map((user) => user.id),
+        action: pendingBulkStatus.action,
+      },
+      {
+        onSuccess: () => {
+          toast.success({
+            title: statusToastMessage(pendingBulkStatus.action, count),
+          });
+          setPendingBulkStatus(null);
+        },
+        onError: (error) => {
+          toast.error({
+            title: isAppError(error)
+              ? error.message
+              : USERS_COPY.toastStatusError,
+          });
+        },
+      },
+    );
+  }, [bulkChangeStatus, pendingBulkStatus, toast]);
 
   const confirmDeleteUser = useCallback(() => {
     if (!pendingDeleteUser) return;
@@ -169,40 +202,6 @@ export function UsersPageContent() {
       },
     });
   }, [bulkDelete, pendingBulkDelete, toast]);
-
-  const handleBulkActivate = useCallback(
-    (users: ManagedUser[]) => {
-      if (users.length === 0) return;
-      bulkStatus.mutate(
-        { ids: users.map((user) => user.id), action: "activate" },
-        {
-          onSuccess: () => {
-            toast.success({
-              title: USERS_COPY.toastBulkActivated(users.length),
-            });
-          },
-        },
-      );
-    },
-    [bulkStatus, toast],
-  );
-
-  const handleBulkDeactivate = useCallback(
-    (users: ManagedUser[]) => {
-      if (users.length === 0) return;
-      bulkStatus.mutate(
-        { ids: users.map((user) => user.id), action: "deactivate" },
-        {
-          onSuccess: () => {
-            toast.success({
-              title: USERS_COPY.toastBulkDeactivated(users.length),
-            });
-          },
-        },
-      );
-    },
-    [bulkStatus, toast],
-  );
 
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
@@ -250,12 +249,20 @@ export function UsersPageContent() {
         onRetry={() => {
           void listQuery.refetch();
         }}
-        onView={openView}
         onEdit={openEdit}
-        onToggleStatus={toggleUserStatus}
+        onStatusAction={(user, action) => {
+          setPendingSingleStatus({ user, action });
+        }}
         onDelete={setPendingDeleteUser}
-        onBulkActivate={handleBulkActivate}
-        onBulkDeactivate={handleBulkDeactivate}
+        onBulkActivate={(users) => {
+          setPendingBulkStatus({ users, action: "activate" });
+        }}
+        onBulkDeactivate={(users) => {
+          setPendingBulkStatus({ users, action: "deactivate" });
+        }}
+        onBulkSuspend={(users) => {
+          setPendingBulkStatus({ users, action: "suspend" });
+        }}
         onBulkDelete={setPendingBulkDelete}
       />
 
@@ -267,8 +274,26 @@ export function UsersPageContent() {
       <EditUserDrawer
         userId={editUserId}
         open={editUserId !== null}
-        mode={editMode}
+        mode="edit"
         onClose={closeEditDrawer}
+      />
+
+      <UserStatusChangeDialog
+        open={pendingSingleStatus !== null}
+        action={pendingSingleStatus?.action ?? null}
+        targetName={pendingSingleStatus?.user.fullName}
+        loading={changeStatus.isPending}
+        onClose={() => setPendingSingleStatus(null)}
+        onConfirm={confirmSingleStatus}
+      />
+
+      <UserStatusChangeDialog
+        open={pendingBulkStatus !== null}
+        action={pendingBulkStatus?.action ?? null}
+        bulkCount={pendingBulkStatus?.users.length}
+        loading={bulkChangeStatus.isPending}
+        onClose={() => setPendingBulkStatus(null)}
+        onConfirm={confirmBulkStatus}
       />
 
       <ConfirmationDialog

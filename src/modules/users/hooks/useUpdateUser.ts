@@ -14,6 +14,9 @@ export function useUpdateUser() {
     onSuccess: async (_data, variables) => {
       await queryClient.invalidateQueries({ queryKey: usersQueryKeys.all });
       await queryClient.invalidateQueries({
+        queryKey: usersQueryKeys.byId(variables.id),
+      });
+      await queryClient.invalidateQueries({
         queryKey: usersQueryKeys.detail(variables.id),
       });
     },

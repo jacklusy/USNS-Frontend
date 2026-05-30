@@ -48,4 +48,16 @@ export interface DepartmentOption {
   label: string;
 }
 
-export type BulkUserStatusAction = "activate" | "deactivate";
+export type UserStatusAction = "activate" | "deactivate" | "suspend";
+
+export type BulkUserStatusAction = UserStatusAction;
+
+export interface UserAccountStats {
+  lastLoginAt: string | null;
+  loginCount: number;
+  failedLoginAttempts: number;
+}
+
+export interface UserDetail extends ManagedUser {
+  account: UserAccountStats;
+}

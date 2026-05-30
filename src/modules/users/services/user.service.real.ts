@@ -1,12 +1,16 @@
 import { del, get, getPaginated, post, put } from "@/services/api-client";
 import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
+import type { UserActivityQueryParams } from "../types/user-audit.types";
+import type { UserAuditEntry } from "../types/user-audit.types";
 import type {
   BulkUserStatusAction,
   CreateUserInput,
   ManagedUser,
   UpdateUserInput,
+  UserDetail,
   UserListQueryParams,
+  UserStatusAction,
 } from "../types/user-management.types";
 import type { IUserService } from "./user.service";
 
@@ -27,6 +31,15 @@ function buildListQuery(params: UserListQueryParams): string {
   return query ? `?${query}` : "";
 }
 
+function buildActivityQuery(params?: UserActivityQueryParams): string {
+  if (!params) return "";
+  const search = new URLSearchParams();
+  if (params.page) search.set("page", String(params.page));
+  if (params.per_page) search.set("per_page", String(params.per_page));
+  const query = search.toString();
+  return query ? `?${query}` : "";
+}
+
 export class RealUserService implements IUserService {
   async list(
     params: UserListQueryParams,
@@ -38,6 +51,31 @@ export class RealUserService implements IUserService {
 
   async getById(id: string): Promise<ApiResponse<ManagedUser>> {
     const data = await get<ManagedUser>(ENDPOINTS.users.byId(id));
+    return { data };
+  }
+
+  async getDetail(id: string): Promise<ApiResponse<UserDetail>> {
+    const data = await get<UserDetail>(ENDPOINTS.users.detail(id));
+    return { data };
+  }
+
+  async listActivity(
+    userId: string,
+    params?: UserActivityQueryParams,
+  ): Promise<PaginatedResponse<UserAuditEntry>> {
+    return getPaginated<UserAuditEntry>(
+      `${ENDPOINTS.users.activity(userId)}${buildActivityQuery(params)}`,
+    );
+  }
+
+  async changeStatus(
+    id: string,
+    action: UserStatusAction,
+  ): Promise<ApiResponse<ManagedUser>> {
+    const data = await post<ManagedUser, { action: UserStatusAction }>(
+      ENDPOINTS.users.changeStatus(id),
+      { action },
+    );
     return { data };
   }
 
@@ -69,15 +107,15 @@ export class RealUserService implements IUserService {
     ids: string[],
     action: BulkUserStatusAction,
   ): Promise<ApiResponse<ManagedUser[]>> {
-    const data = await post<ManagedUser[], { ids: string[]; action: BulkUserStatusAction }>(
-      `${ENDPOINTS.users.list}/bulk-status`,
-      { ids, action },
-    );
+    const data = await post<
+      ManagedUser[],
+      { ids: string[]; action: BulkUserStatusAction }
+    >(ENDPOINTS.users.bulkStatus, { ids, action });
     return { data };
   }
 
   async bulkDelete(ids: string[]): Promise<ApiResponse<null>> {
-    await post<null, { ids: string[] }>(`${ENDPOINTS.users.list}/bulk-delete`, {
+    await post<null, { ids: string[] }>(ENDPOINTS.users.bulkDelete, {
       ids,
     });
     return { data: null };

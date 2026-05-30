@@ -1,10 +1,19 @@
 "use client";
 
-import { Eye, Pencil, Trash2, UserCheck, UserX } from "lucide-react";
+import {
+  Ban,
+  Eye,
+  Pencil,
+  Trash2,
+  UserCheck,
+  UserX,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { DataTable } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/Badge";
 import { ROLE_DISPLAY_LABELS } from "@/constants/roles.constants";
+import { userDetailRoute } from "@/constants/routes.constants";
 import { USERS_COPY } from "@/constants/users.constants";
 import { usePermissions } from "@/modules/auth/hooks/usePermissions";
 import type {
@@ -13,7 +22,10 @@ import type {
 } from "@/types/data-table.types";
 import { PERMISSIONS } from "@/types/permission.types";
 import { UserStatus } from "@/types/user.types";
-import type { ManagedUser } from "../types/user-management.types";
+import type {
+  ManagedUser,
+  UserStatusAction,
+} from "../types/user-management.types";
 import { formatUserStatusLabel } from "../utils/user-status-display";
 
 function statusBadgeVariant(
@@ -35,12 +47,12 @@ interface UsersTableProps {
   onPageChange: (page: number) => void;
   onPerPageChange: (perPage: number) => void;
   onRetry: () => void;
-  onView: (user: ManagedUser) => void;
   onEdit: (user: ManagedUser) => void;
-  onToggleStatus: (user: ManagedUser) => void;
+  onStatusAction: (user: ManagedUser, action: UserStatusAction) => void;
   onDelete: (user: ManagedUser) => void;
   onBulkActivate: (users: ManagedUser[]) => void;
   onBulkDeactivate: (users: ManagedUser[]) => void;
+  onBulkSuspend: (users: ManagedUser[]) => void;
   onBulkDelete: (users: ManagedUser[]) => void;
 }
 
@@ -55,14 +67,15 @@ export function UsersTable({
   onPageChange,
   onPerPageChange,
   onRetry,
-  onView,
   onEdit,
-  onToggleStatus,
+  onStatusAction,
   onDelete,
   onBulkActivate,
   onBulkDeactivate,
+  onBulkSuspend,
   onBulkDelete,
 }: UsersTableProps) {
+  const router = useRouter();
   const { can } = usePermissions();
 
   const columns = useMemo<readonly DataTableColumn<ManagedUser>[]>(
@@ -117,7 +130,9 @@ export function UsersTable({
         id: "view",
         label: USERS_COPY.actionViewProfile,
         icon: Eye,
-        onSelect: onView,
+        onSelect: (user) => {
+          router.push(userDetailRoute(user.id));
+        },
         requiredPermission: PERMISSIONS.users.view,
       },
     ];
@@ -135,17 +150,25 @@ export function UsersTable({
           id: "deactivate",
           label: USERS_COPY.actionDeactivate,
           icon: UserX,
-          onSelect: onToggleStatus,
+          onSelect: (user) => onStatusAction(user, "deactivate"),
           requiredPermission: PERMISSIONS.users.edit,
-          isVisible: (row: ManagedUser) => row.status === UserStatus.Active,
+          isVisible: (row) => row.status === UserStatus.Active,
+        },
+        {
+          id: "suspend",
+          label: USERS_COPY.actionSuspend,
+          icon: Ban,
+          onSelect: (user) => onStatusAction(user, "suspend"),
+          requiredPermission: PERMISSIONS.users.edit,
+          isVisible: (row) => row.status === UserStatus.Active,
         },
         {
           id: "activate",
           label: USERS_COPY.actionActivate,
           icon: UserCheck,
-          onSelect: onToggleStatus,
+          onSelect: (user) => onStatusAction(user, "activate"),
           requiredPermission: PERMISSIONS.users.edit,
-          isVisible: (row: ManagedUser) => row.status !== UserStatus.Active,
+          isVisible: (row) => row.status !== UserStatus.Active,
         },
       );
     }
@@ -162,7 +185,7 @@ export function UsersTable({
     }
 
     return actions;
-  }, [can, onDelete, onEdit, onToggleStatus, onView]);
+  }, [can, onDelete, onEdit, onStatusAction, router]);
 
   const bulkActions = useMemo(() => {
     const actions = [];
@@ -178,6 +201,11 @@ export function UsersTable({
           label: USERS_COPY.bulkDeactivate,
           onAction: onBulkDeactivate,
         },
+        {
+          id: "bulk-suspend",
+          label: USERS_COPY.bulkSuspend,
+          onAction: onBulkSuspend,
+        },
       );
     }
     if (can(PERMISSIONS.users.delete)) {
@@ -188,7 +216,7 @@ export function UsersTable({
       });
     }
     return actions;
-  }, [can, onBulkActivate, onBulkDeactivate, onBulkDelete]);
+  }, [can, onBulkActivate, onBulkDeactivate, onBulkDelete, onBulkSuspend]);
 
   return (
     <DataTable

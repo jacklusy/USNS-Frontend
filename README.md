@@ -75,16 +75,19 @@ Requires `users.view`. Mock data and services live under `src/mock/users/` and `
 
 | Account | User management capabilities |
 | --- | --- |
-| `admin@usns.edu` | List, search, filters, create, edit, activate/deactivate; **no** row or bulk delete |
+| `admin@usns.edu` | List, detail, create, edit, activate/deactivate/suspend (with confirm); **no** delete |
 | `president@usns.edu` | Full access including delete (row menu and bulk) |
-| `dean@usns.edu` | View list only (no create, edit, or delete actions) |
+| `dean@usns.edu` | View list and detail only (no create, edit, status, or delete) |
 | `dba@usns.edu` | No user permissions (nav item hidden; direct URL hits access denied) |
 
 | Feature | Notes |
 | --- | --- |
 | List | Server-side search, pagination, role/status filters (URL keys `role`, `status`) |
+| Detail | `/users/[id]` — profile (initials avatar), permissions by category, account stats, activity tab (mock audit trail) |
 | Create | Drawer with temporary password and force password change |
-| Edit / view | Same drawer; view mode is read-only; save disabled until the form is dirty |
+| Edit | Drawer from list or detail; save disabled until the form is dirty |
+| Status | Activate, deactivate, and suspend require confirmation; optimistic badge updates with rollback on error; changes append to mock audit log |
+| Bulk status | Activate, deactivate, or suspend selected rows from the list (with confirmation) |
 | Self role demotion | Editing your own account to a lower role shows a confirmation step |
 | Duplicate email | Create/edit surfaces a field-level validation error from the mock service |
 

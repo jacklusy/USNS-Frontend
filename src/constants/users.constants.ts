@@ -56,4 +56,47 @@ export const USERS_COPY = {
   fieldForcePasswordChange: "Require password change on first sign-in",
   selectRolePlaceholder: "Select a role",
   selectDepartmentPlaceholder: "Select a department",
+  backToUsers: "Back to users",
+  detailNotFoundTitle: "User not found",
+  detailNotFoundDescription:
+    "This user may have been removed or the link is invalid.",
+  sectionProfile: "Profile",
+  sectionPermissions: "Permissions",
+  sectionAccount: "Account",
+  sectionActivity: "Activity",
+  tabDetailsLabel: "Details",
+  tabActivityLabel: "Activity",
+  fieldJoinDate: "Joined",
+  fieldDepartmentLabel: "Department",
+  fieldLastLogin: "Last sign-in",
+  fieldLoginCount: "Total sign-ins",
+  fieldFailedAttempts: "Failed sign-in attempts",
+  permissionsEmpty: "No permissions assigned for this role.",
+  activityEmptyTitle: "No activity yet",
+  activityEmptyDescription:
+    "Status changes and account events will appear here.",
+  actionSuspend: "Suspend",
+  bulkSuspend: "Suspend selected",
+  statusConfirmActivateTitle: "Activate user?",
+  statusConfirmDeactivateTitle: "Deactivate user?",
+  statusConfirmSuspendTitle: "Suspend user?",
+  statusConfirmActivateDescription: (name: string) =>
+    `${name} will regain access and can sign in to the dashboard.`,
+  statusConfirmDeactivateDescription: (name: string) =>
+    `${name} will lose dashboard access until the account is activated again.`,
+  statusConfirmSuspendDescription: (name: string) =>
+    `${name} will be suspended pending review and cannot sign in until reactivated.`,
+  bulkStatusConfirmActivateTitle: "Activate selected users?",
+  bulkStatusConfirmDeactivateTitle: "Deactivate selected users?",
+  bulkStatusConfirmSuspendTitle: "Suspend selected users?",
+  bulkStatusConfirmActivateDescription: (count: number) =>
+    `${count} users will regain dashboard access.`,
+  bulkStatusConfirmDeactivateDescription: (count: number) =>
+    `${count} users will lose dashboard access until activated again.`,
+  bulkStatusConfirmSuspendDescription: (count: number) =>
+    `${count} users will be suspended and cannot sign in until reactivated.`,
+  statusConfirmLabel: "Confirm",
+  toastSuspended: "User suspended",
+  toastBulkSuspended: (count: number) => `${count} users suspended`,
+  toastStatusError: "Could not update user status. Please try again.",
 } as const;

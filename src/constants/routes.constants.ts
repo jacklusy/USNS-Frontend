@@ -14,6 +14,10 @@ export const ROUTES = {
   DEV_UI_KIT: "/dev/ui-kit",
 } as const;
 
+export function userDetailRoute(id: string): string {
+  return `${ROUTES.USERS}/${id}`;
+}
+
 export function loginWithReturn(returnUrl: string): string {
   const params = new URLSearchParams({ returnUrl });
   return `${ROUTES.LOGIN}?${params.toString()}`;

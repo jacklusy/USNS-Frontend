@@ -10,9 +10,14 @@ export const ENDPOINTS = {
   users: {
     list: "/users",
     byId: (id: string) => `/users/${id}`,
+    detail: (id: string) => `/users/${id}/detail`,
+    changeStatus: (id: string) => `/users/${id}/status`,
+    activity: (id: string) => `/users/${id}/activity`,
     create: "/users",
     update: (id: string) => `/users/${id}`,
     delete: (id: string) => `/users/${id}`,
+    bulkStatus: "/users/bulk-status",
+    bulkDelete: "/users/bulk-delete",
   },
   roles: {
     list: "/roles",
