@@ -36,6 +36,14 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Mock authentication (when `NEXT_PUBLIC_MOCK_MODE=true`)
+
+| Flow | Credentials / URL |
+| --- | --- |
+| Sign in | `president@usns.edu` or `admin@usns.edu` — password `Password1!` |
+| Reset password | `/reset-password?token=valid_reset_token` |
+| Expired reset link | `/reset-password?token=expired_reset_token` |
+
 ## Scripts
 
 | Command                | Description                 |
