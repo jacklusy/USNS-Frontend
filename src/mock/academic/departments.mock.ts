@@ -3,6 +3,7 @@ import type { DepartmentListQueryParams } from "@/modules/academic/types/academi
 import type { PaginatedResponse } from "@/types/api.types";
 import type { EntityStatus } from "@/constants/status-badge.constants";
 import { getUsersStore } from "@/mock/users/users.mock";
+import { administrativeStaffCountByDepartmentId } from "@/mock/staff/staff.mock";
 import { findCollegeById, getCollegesStore } from "@/mock/academic/colleges.mock";
 import { findUserNameById } from "@/mock/academic/user-labels.mock";
 import { getCoursesStore } from "@/mock/academic/courses.mock";
@@ -206,7 +207,9 @@ export function recomputeDepartmentCounts(): void {
     dept.collegeName = college?.name ?? dept.collegeId;
     dept.headName = findUserNameById(dept.headUserId);
     dept.courseCount = courses.filter((c) => c.departmentId === dept.id).length;
-    dept.staffCount = users.filter((u) => u.departmentId === dept.id).length;
+    const dashboardUsers = users.filter((u) => u.departmentId === dept.id).length;
+    const adminStaff = administrativeStaffCountByDepartmentId(dept.id);
+    dept.staffCount = dashboardUsers + adminStaff;
   }
 }
 

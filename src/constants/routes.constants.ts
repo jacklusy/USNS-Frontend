@@ -17,6 +17,8 @@ export const ROUTES = {
   PROGRAMS: "/programs",
   COURSES: "/courses",
   ACADEMIC_YEARS: "/academic-years",
+  FACULTY: "/faculty",
+  STAFF: "/staff",
   DEV_UI_KIT: "/dev/ui-kit",
 } as const;
 
@@ -42,6 +44,14 @@ export function academicYearDetailRoute(id: string): string {
 
 export function userDetailRoute(id: string): string {
   return `${ROUTES.USERS}/${id}`;
+}
+
+export function facultyDetailRoute(id: string): string {
+  return `${ROUTES.FACULTY}/${id}`;
+}
+
+export function staffDetailRoute(id: string): string {
+  return `${ROUTES.STAFF}/${id}`;
 }
 
 export function loginWithReturn(returnUrl: string): string {

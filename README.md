@@ -130,6 +130,23 @@ Mock data in `src/mock/academic/`; services in `src/modules/academic/`.
 
 User create/edit department dropdown reads from the academic department store (not the legacy flat list).
 
+### Faculty and staff (EPIC-09)
+
+Mock data in `src/mock/faculty/` and `src/mock/staff/`; services in `src/modules/faculty/` and `src/modules/staff/`.
+
+| Account | Faculty | Administrative staff |
+| --- | --- | --- |
+| `president@usns.edu` | view + manage | view + manage |
+| `dean@usns.edu` | view + manage | view only |
+| `admin@usns.edu` | no nav | no nav |
+
+| Route | Feature |
+| --- | --- |
+| `/faculty` | List, create/edit drawer, filters (department, rank, status); detail with semester courses, publications, workload indicator |
+| `/staff` | List, create/edit drawer with dashboard role; detail with permissions summary by role |
+
+Department detail staff count includes dashboard users plus administrative staff assigned to that department.
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

@@ -98,6 +98,24 @@ export const DASHBOARD_NAV_GROUPS: readonly NavGroup[] = [
     ],
   },
   {
+    id: "people",
+    label: "People",
+    items: [
+      {
+        href: ROUTES.FACULTY,
+        label: "Faculty",
+        icon: "users",
+        requiredPermission: PERMISSIONS.faculty.view,
+      },
+      {
+        href: ROUTES.STAFF,
+        label: "Administrative staff",
+        icon: "users",
+        requiredPermission: PERMISSIONS.staff.view,
+      },
+    ],
+  },
+  {
     id: "academic",
     label: "Academic",
     items: [
