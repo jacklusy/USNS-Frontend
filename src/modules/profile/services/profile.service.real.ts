@@ -1,4 +1,14 @@
+import {
+  toAccountPreferences,
+  toUserProfile,
+} from "@/lib/transformers/profile.transformer";
+import { get, post, put } from "@/services/api-client";
+import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse } from "@/types/api.types";
+import type {
+  AccountPreferencesDto,
+  UserProfileDto,
+} from "@/types/dto/profile.dto";
 import type {
   AccountPreferences,
   ChangePasswordInput,
@@ -10,35 +20,53 @@ import type { IProfileService } from "./profile.service";
 
 export class RealProfileService implements IProfileService {
   async getProfile(): Promise<ApiResponse<UserProfile>> {
-    throw new Error("Profile API not integrated");
+    const data = await get<UserProfileDto>(ENDPOINTS.profile.me);
+    return { data: toUserProfile(data) };
   }
 
   async updateProfile(
-    _input: UpdateProfileInput,
+    input: UpdateProfileInput,
   ): Promise<ApiResponse<UserProfile>> {
-    throw new Error("Profile API not integrated");
+    const data = await put<UserProfileDto, UpdateProfileInput>(
+      ENDPOINTS.profile.update,
+      input,
+    );
+    return { data: toUserProfile(data) };
   }
 
   async uploadAvatar(
-    _input: UploadAvatarInput,
+    input: UploadAvatarInput,
   ): Promise<ApiResponse<UserProfile>> {
-    throw new Error("Profile API not integrated");
+    const data = await post<UserProfileDto, UploadAvatarInput>(
+      ENDPOINTS.profile.avatar,
+      input,
+    );
+    return { data: toUserProfile(data) };
   }
 
   async changePassword(
-    _input: ChangePasswordInput,
+    input: ChangePasswordInput,
   ): Promise<ApiResponse<null>> {
-    throw new Error("Profile API not integrated");
+    await post<null, ChangePasswordInput>(
+      ENDPOINTS.profile.changePassword,
+      input,
+    );
+    return { data: null };
   }
 
   async getPreferences(): Promise<ApiResponse<AccountPreferences>> {
-    throw new Error("Profile API not integrated");
+    const data = await get<AccountPreferencesDto>(ENDPOINTS.profile.preferences);
+    return { data: toAccountPreferences(data) };
   }
 
   async updatePreferences(
-    _input: AccountPreferences,
+    input: AccountPreferences,
   ): Promise<ApiResponse<AccountPreferences>> {
-    throw new Error("Profile API not integrated");
+    const data = await put<AccountPreferencesDto, AccountPreferences>(
+      ENDPOINTS.profile.preferences,
+      input,
+    );
+    return { data: toAccountPreferences(data) };
   }
 }
 

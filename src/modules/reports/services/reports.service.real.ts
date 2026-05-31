@@ -1,4 +1,20 @@
+import {
+  toGeneratedReport,
+  toReportCatalog,
+  toReportDownloadResult,
+  toReportGenerationStart,
+  toReportJob,
+} from "@/lib/transformers/reports.transformer";
+import { get, post } from "@/services/api-client";
+import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse } from "@/types/api.types";
+import type {
+  GeneratedReportDto,
+  ReportCatalogDto,
+  ReportDownloadResultDto,
+  ReportGenerationStartDto,
+  ReportJobDto,
+} from "@/types/dto/reports.dto";
 import type {
   GeneratedReport,
   ReportCatalog,
@@ -10,27 +26,35 @@ import type { IReportsService } from "./reports.service";
 
 export class RealReportsService implements IReportsService {
   async getCatalog(): Promise<ApiResponse<ReportCatalog>> {
-    throw new Error("Reports API not integrated");
+    const data = await get<ReportCatalogDto>(ENDPOINTS.reports.list);
+    return { data: toReportCatalog(data) };
   }
 
   async getRecent(): Promise<ApiResponse<GeneratedReport[]>> {
-    throw new Error("Reports API not integrated");
+    const data = await get<GeneratedReportDto[]>(ENDPOINTS.reports.recent);
+    return { data: data.map(toGeneratedReport) };
   }
 
   async startGeneration(
-    _reportId: string,
+    reportId: string,
   ): Promise<ApiResponse<ReportGenerationStart>> {
-    throw new Error("Reports API not integrated");
+    const data = await post<ReportGenerationStartDto, { report_id: string }>(
+      ENDPOINTS.reports.generate,
+      { report_id: reportId },
+    );
+    return { data: toReportGenerationStart(data) };
   }
 
-  async getJobStatus(_jobId: string): Promise<ApiResponse<ReportJob>> {
-    throw new Error("Reports API not integrated");
+  async getJobStatus(jobId: string): Promise<ApiResponse<ReportJob>> {
+    const data = await get<ReportJobDto>(ENDPOINTS.reports.jobById(jobId));
+    return { data: toReportJob(data) };
   }
 
   async downloadGenerated(
-    _id: string,
+    id: string,
   ): Promise<ApiResponse<ReportDownloadResult>> {
-    throw new Error("Reports API not integrated");
+    const data = await get<ReportDownloadResultDto>(ENDPOINTS.reports.export(id));
+    return { data: toReportDownloadResult(data) };
   }
 }
 

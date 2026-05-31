@@ -1,0 +1,15 @@
+export const MOCK_MODULE_MAP = {
+  auth: "src/mock/auth/auth.mock.ts",
+  users: "src/mock/users/users.mock.ts",
+  roles: "src/mock/roles/roles.mock.ts",
+  academic: "src/mock/academic/",
+  faculty: "src/mock/faculty/faculty.mock.ts",
+  staff: "src/mock/staff/staff.mock.ts",
+  audit: "src/mock/audit/",
+  notifications: "src/mock/notifications/notifications.mock.ts",
+  reports: "src/mock/reports/",
+  settings: "src/mock/settings/",
+  dashboard: "src/mock/dashboard/dashboard.mock.ts",
+  profile: "src/mock/profile/profile.mock.ts",
+  search: "src/mock/search/global-search.mock.ts",
+} as const;

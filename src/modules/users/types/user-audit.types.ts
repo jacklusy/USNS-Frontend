@@ -12,7 +12,7 @@ export interface UserAuditEntry {
   action: string;
   actionType: UserAuditActionType;
   description: string;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface UserActivityQueryParams {

@@ -21,7 +21,7 @@ export interface Notification {
   category: NotificationCategory;
   type: NotificationType;
   read: boolean;
-  createdAt: string;
+  createdAt: Date;
   linkHref?: string;
 }
 

@@ -62,7 +62,7 @@ function toStaffMember(
     position: input.position.trim(),
     dashboardRole: input.dashboardRole,
     status: input.status,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
   };
 }
 

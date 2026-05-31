@@ -1,6 +1,16 @@
+import {
+  toManagedUser,
+  toUserAuditEntry,
+  toUserDetail,
+} from "@/lib/transformers/user.transformer";
 import { del, get, getPaginated, post, put } from "@/services/api-client";
 import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
+import type {
+  ManagedUserDto,
+  UserAuditEntryDto,
+  UserDetailDto,
+} from "@/types/dto/user.dto";
 import type { UserActivityQueryParams } from "../types/user-audit.types";
 import type { UserAuditEntry } from "../types/user-audit.types";
 import type { UserRole } from "@/types/user.types";
@@ -46,58 +56,66 @@ export class RealUserService implements IUserService {
   async list(
     params: UserListQueryParams,
   ): Promise<PaginatedResponse<ManagedUser>> {
-    return getPaginated<ManagedUser>(
+    const response = await getPaginated<ManagedUserDto>(
       `${ENDPOINTS.users.list}${buildListQuery(params)}`,
     );
+    return {
+      data: response.data.map(toManagedUser),
+      meta: response.meta,
+    };
   }
 
   async getById(id: string): Promise<ApiResponse<ManagedUser>> {
-    const data = await get<ManagedUser>(ENDPOINTS.users.byId(id));
-    return { data };
+    const data = await get<ManagedUserDto>(ENDPOINTS.users.byId(id));
+    return { data: toManagedUser(data) };
   }
 
   async getDetail(id: string): Promise<ApiResponse<UserDetail>> {
-    const data = await get<UserDetail>(ENDPOINTS.users.detail(id));
-    return { data };
+    const data = await get<UserDetailDto>(ENDPOINTS.users.detail(id));
+    return { data: toUserDetail(data) };
   }
 
   async listActivity(
     userId: string,
     params?: UserActivityQueryParams,
   ): Promise<PaginatedResponse<UserAuditEntry>> {
-    return getPaginated<UserAuditEntry>(
+    const response = await getPaginated<UserAuditEntryDto>(
       `${ENDPOINTS.users.activity(userId)}${buildActivityQuery(params)}`,
     );
+    return {
+      data: response.data.map(toUserAuditEntry),
+      meta: response.meta,
+    };
   }
 
   async changeStatus(
     id: string,
     action: UserStatusAction,
   ): Promise<ApiResponse<ManagedUser>> {
-    const data = await post<ManagedUser, { action: UserStatusAction }>(
+    const data = await post<ManagedUserDto, { action: UserStatusAction }>(
       ENDPOINTS.users.changeStatus(id),
       { action },
     );
-    return { data };
+    return { data: toManagedUser(data) };
   }
 
   async create(input: CreateUserInput): Promise<ApiResponse<ManagedUser>> {
-    const data = await post<ManagedUser, CreateUserInput>(
+    const data = await post<ManagedUserDto, CreateUserInput>(
       ENDPOINTS.users.create,
       input,
     );
-    return { data };
+    return { data: toManagedUser(data) };
   }
 
   async update(
     id: string,
     input: UpdateUserInput,
   ): Promise<ApiResponse<ManagedUser>> {
-    const data = await put<ManagedUser, UpdateUserInput>(
+    const data = await put<ManagedUserDto, UpdateUserInput>(
       ENDPOINTS.users.update(id),
       input,
     );
-    return { data };
+    return { data: toManagedUser(data) };
   }
 
   async delete(id: string): Promise<ApiResponse<null>> {

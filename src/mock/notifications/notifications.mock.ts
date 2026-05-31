@@ -5,9 +5,11 @@ import {
   departmentDetailRoute,
   facultyDetailRoute,
   programDetailRoute,
+  reportsUsageRoute,
   ROUTES,
   userDetailRoute,
 } from "@/constants/routes.constants";
+import { toNotification } from "@/lib/transformers/notification.transformer";
 import type {
   Notification,
   NotificationCategory,
@@ -15,8 +17,11 @@ import type {
   NotificationPaginatedResponse,
   NotificationReadFilter,
 } from "@/modules/notifications/types/notification.types";
+import type { NotificationDto } from "@/types/dto/notification.dto";
 
-const SEED_NOTIFICATIONS: Notification[] = [
+type NotificationSeed = Omit<Notification, "createdAt"> & { createdAt: string };
+
+const SEED_NOTIFICATIONS_RAW: NotificationSeed[] = [
   {
     id: "notif_001",
     title: "Pending user approvals",
@@ -233,18 +238,114 @@ const SEED_NOTIFICATIONS: Notification[] = [
     read: true,
     createdAt: "2026-05-20T11:00:00Z",
   },
+  {
+    id: "notif_023",
+    title: "Faculty roster update",
+    description: "Three faculty records were updated in Computer Science.",
+    category: "academic",
+    type: "course",
+    read: false,
+    createdAt: "2026-05-18T09:00:00Z",
+    linkHref: facultyDetailRoute("fac_001"),
+  },
+  {
+    id: "notif_024",
+    title: "Security policy reminder",
+    description: "Annual password rotation policy applies next week.",
+    category: "security",
+    type: "security_alert",
+    read: true,
+    createdAt: "2026-05-17T15:30:00Z",
+  },
+  {
+    id: "notif_025",
+    title: "Enrollment cap warning",
+    description: "CS301 enrollment exceeded the recommended cap.",
+    category: "academic",
+    type: "enrollment",
+    read: false,
+    createdAt: "2026-05-16T08:45:00Z",
+    linkHref: courseDetailRoute("course_001"),
+  },
+  {
+    id: "notif_026",
+    title: "New staff onboarding",
+    description: "Two staff accounts were provisioned in Operations.",
+    category: "system",
+    type: "user",
+    read: true,
+    createdAt: "2026-05-15T12:00:00Z",
+    linkHref: ROUTES.STAFF,
+  },
+  {
+    id: "notif_027",
+    title: "Audit export ready",
+    description: "Your audit log export is available for download.",
+    category: "security",
+    type: "report",
+    read: false,
+    createdAt: "2026-05-14T17:20:00Z",
+    linkHref: `${ROUTES.AUDIT}/logs`,
+  },
+  {
+    id: "notif_028",
+    title: "Department head assigned",
+    description: "A new department head was assigned to Mathematics.",
+    category: "academic",
+    type: "calendar",
+    read: true,
+    createdAt: "2026-05-13T10:10:00Z",
+    linkHref: departmentDetailRoute("dept_mathematics"),
+  },
+  {
+    id: "notif_029",
+    title: "Report generation failed",
+    description: "Usage report job failed. Retry from the reports hub.",
+    category: "system",
+    type: "maintenance",
+    read: false,
+    createdAt: "2026-05-12T13:55:00Z",
+    linkHref: reportsUsageRoute(),
+  },
+  {
+    id: "notif_030",
+    title: "Settings backup completed",
+    description: "System settings snapshot was saved successfully.",
+    category: "system",
+    type: "approval",
+    read: true,
+    createdAt: "2026-05-11T06:30:00Z",
+    linkHref: ROUTES.SETTINGS,
+  },
 ];
 
-let notificationsStore: Notification[] = SEED_NOTIFICATIONS.map((item) => ({
-  ...item,
-}));
+function seedToDto(seed: NotificationSeed): NotificationDto {
+  return {
+    id: seed.id,
+    title: seed.title,
+    description: seed.description,
+    category: seed.category,
+    type: seed.type,
+    read: seed.read,
+    created_at: seed.createdAt,
+    link_href: seed.linkHref,
+  };
+}
+
+let notificationsDtoStore: NotificationDto[] = SEED_NOTIFICATIONS_RAW.map(
+  seedToDto,
+);
 
 export function getNotificationsStore(): Notification[] {
-  return notificationsStore;
+  return notificationsDtoStore.map(toNotification);
+}
+
+export function getNotificationsStoreCount(): number {
+  return notificationsDtoStore.length;
 }
 
 export function countUnreadNotifications(): number {
-  return notificationsStore.filter((item) => !item.read).length;
+  return notificationsDtoStore.filter((item) => !item.read).length;
 }
 
 function isCategory(value: string): value is NotificationCategory {
@@ -296,44 +397,45 @@ export function paginateNotifications(
 }
 
 export function listRecentUnreadFromStore(limit: number): Notification[] {
-  return notificationsStore
+  return notificationsDtoStore
     .filter((item) => !item.read)
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     )
-    .slice(0, limit);
+    .slice(0, limit)
+    .map(toNotification);
 }
 
 export function markNotificationReadInStore(id: string): Notification | null {
-  const index = notificationsStore.findIndex((item) => item.id === id);
+  const index = notificationsDtoStore.findIndex((item) => item.id === id);
   if (index < 0) return null;
-  const updated = { ...notificationsStore[index], read: true };
-  notificationsStore = notificationsStore.map((item, i) =>
+  const updated = { ...notificationsDtoStore[index], read: true };
+  notificationsDtoStore = notificationsDtoStore.map((item, i) =>
     i === index ? updated : item,
   );
-  return updated;
+  return toNotification(updated);
 }
 
 export function markNotificationUnreadInStore(id: string): Notification | null {
-  const index = notificationsStore.findIndex((item) => item.id === id);
+  const index = notificationsDtoStore.findIndex((item) => item.id === id);
   if (index < 0) return null;
-  const updated = { ...notificationsStore[index], read: false };
-  notificationsStore = notificationsStore.map((item, i) =>
+  const updated = { ...notificationsDtoStore[index], read: false };
+  notificationsDtoStore = notificationsDtoStore.map((item, i) =>
     i === index ? updated : item,
   );
-  return updated;
+  return toNotification(updated);
 }
 
 export function markAllNotificationsReadInStore(): void {
-  notificationsStore = notificationsStore.map((item) => ({
+  notificationsDtoStore = notificationsDtoStore.map((item) => ({
     ...item,
     read: true,
   }));
 }
 
 export function deleteNotificationFromStore(id: string): boolean {
-  const before = notificationsStore.length;
-  notificationsStore = notificationsStore.filter((item) => item.id !== id);
-  return notificationsStore.length < before;
+  const before = notificationsDtoStore.length;
+  notificationsDtoStore = notificationsDtoStore.filter((item) => item.id !== id);
+  return notificationsDtoStore.length < before;
 }

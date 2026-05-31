@@ -60,7 +60,7 @@ function toFacultyMember(input: CreateFacultyInput, id: string): FacultyMember {
     status: input.status,
     assignedCourseIds: [...input.assignedCourseIds],
     publicationsCount: input.publicationsCount,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
   };
 }
 

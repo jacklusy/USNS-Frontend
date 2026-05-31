@@ -359,6 +359,10 @@ const SEED_LOGIN_HISTORY: LoginHistoryEntry[] = [
 
 let loginHistoryStore: LoginHistoryEntry[] = structuredClone(SEED_LOGIN_HISTORY);
 
+export function getLoginHistoryStoreCount(): number {
+  return loginHistoryStore.length;
+}
+
 function matchesDate(
   timestamp: string,
   dateFrom?: string,

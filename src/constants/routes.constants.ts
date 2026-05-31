@@ -16,6 +16,7 @@ export const ROUTES = {
   ERRORS_SERVER: "/errors/server",
   ERRORS_UNAVAILABLE: "/errors/unavailable",
   DEV_ERRORS: "/dev/errors",
+  DEV_MOCK_TOOLS: "/dev/mock-tools",
   ANNOUNCEMENTS: "/announcements",
   NOTIFICATIONS: "/notifications",
   USERS: "/users",

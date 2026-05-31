@@ -2,7 +2,7 @@ export type AuditLogResult = "success" | "failure";
 
 export interface AuditLog {
   id: string;
-  timestamp: string;
+  timestamp: Date;
   actorName: string;
   actorId?: string;
   action: string;

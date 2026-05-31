@@ -9,11 +9,12 @@ import {
   SYSTEM_EVENT_SEVERITY_LABELS,
 } from "@/constants/audit-log.constants";
 
-function formatTimestamp(iso: string): string {
+function formatTimestamp(value: string | Date): string {
+  const date = value instanceof Date ? value : new Date(value);
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(iso));
+  }).format(date);
 }
 
 export function downloadAuditLogsCsv(rows: AuditLog[], filename: string): void {

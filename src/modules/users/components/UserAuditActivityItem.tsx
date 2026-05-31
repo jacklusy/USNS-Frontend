@@ -56,7 +56,7 @@ export function UserAuditActivityItem({ entry }: UserAuditActivityItemProps) {
           </div>
         </div>
         <p className="mt-2 text-[13px] text-muted-fg">
-          <time dateTime={entry.createdAt}>
+          <time dateTime={entry.createdAt.toISOString()}>
             {formatRelativeTime(entry.createdAt)}
           </time>
         </p>

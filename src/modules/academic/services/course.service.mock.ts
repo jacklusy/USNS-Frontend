@@ -108,7 +108,7 @@ export class MockCourseService extends MockServiceBase implements ICourseService
       sectionCount: 0,
       enrollmentCount: 0,
       programIds: [],
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
     getCoursesStore().unshift(course);
     recomputeCourseDisplayFields();

@@ -2,6 +2,7 @@ import { ROLE_DISPLAY_LABELS, USER_ROLE_VALUES } from "@/constants/roles.constan
 import { ROLE_PERMISSIONS } from "@/constants/role-permissions.constants";
 import type { ManagedRole } from "@/modules/roles/types/role-management.types";
 import type { RoleListQueryParams } from "@/modules/roles/types/role-management.types";
+import { paginate } from "@/mock/lib/mock-query";
 import { getUsersStore } from "@/mock/users/users.mock";
 import type { PaginatedResponse } from "@/types/api.types";
 import type { Permission } from "@/types/permission.types";
@@ -60,7 +61,51 @@ const CUSTOM_SEED: ManagedRole[] = [
   },
 ];
 
-const SEED_ROLES: ManagedRole[] = [...buildSystemRoles(), ...CUSTOM_SEED];
+const GENERATED_CUSTOM_ROLES: ManagedRole[] = [
+  "Curriculum Coordinator",
+  "Enrollment Analyst",
+  "Faculty Affairs Specialist",
+  "Finance Reviewer",
+  "HR Operations",
+  "IT Support Lead",
+  "Library Services",
+  "Marketing Coordinator",
+  "Research Grants",
+  "Student Success Coach",
+  "Systems Integrator",
+  "Teaching Assistant Admin",
+].map((name, index) => {
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  const permissionSets: Permission[][] = [
+    ["dashboard.view", "users.view", "faculty.view"],
+    ["dashboard.view", "reports.view", "reports.export"],
+    ["dashboard.view", "audit.view"],
+    ["dashboard.view", "settings.view"],
+    ["dashboard.view", "users.view", "staff.view"],
+    ["dashboard.view", "academic.colleges.manage", "academic.departments.manage"],
+    ["dashboard.view", "academic.courses.manage", "academic.programs.manage"],
+    ["dashboard.view", "notifications.view"],
+  ];
+  return {
+    id: `role_custom_gen_${String(index + 1).padStart(2, "0")}`,
+    slug: `custom-${slug}`,
+    name,
+    description: `Custom role for ${name.toLowerCase()} workflows in the administration dashboard.`,
+    isSystem: false,
+    permissions: permissionSets[index % permissionSets.length] as Permission[],
+    userCount: 0,
+    createdAt: `2025-0${(index % 9) + 1}-10T10:00:00.000Z`,
+  };
+});
+
+const SEED_ROLES: ManagedRole[] = [
+  ...buildSystemRoles(),
+  ...CUSTOM_SEED,
+  ...GENERATED_CUSTOM_ROLES,
+];
 
 let rolesStore: ManagedRole[] = structuredClone(SEED_ROLES);
 
@@ -136,18 +181,7 @@ export function paginateRoles(
   page: number,
   perPage: number,
 ): PaginatedResponse<ManagedRole> {
-  const lastPage = Math.max(1, Math.ceil(roles.length / perPage));
-  const safePage = Math.min(Math.max(1, page), lastPage);
-  const start = (safePage - 1) * perPage;
-  return {
-    data: roles.slice(start, start + perPage),
-    meta: {
-      total: roles.length,
-      page: safePage,
-      per_page: perPage,
-      last_page: lastPage,
-    },
-  };
+  return paginate(roles, page, perPage);
 }
 
 export function findRoleById(id: string): ManagedRole | undefined {

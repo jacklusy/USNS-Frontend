@@ -1,6 +1,13 @@
+import { parseOptionalApiDate } from "@/lib/transformers/common";
 import type { UserAccountStats } from "@/modules/users/types/user-management.types";
 
-const SEED_ACCOUNT_STATS: Record<string, UserAccountStats> = {
+type UserAccountStatsSeed = {
+  lastLoginAt: string | null;
+  loginCount: number;
+  failedLoginAttempts: number;
+};
+
+const SEED_ACCOUNT_STATS_RAW: Record<string, UserAccountStatsSeed> = {
   usr_president: {
     lastLoginAt: "2026-05-30T08:12:00.000Z",
     loginCount: 412,
@@ -28,72 +35,72 @@ const SEED_ACCOUNT_STATS: Record<string, UserAccountStats> = {
   },
   usr_006: {
     lastLoginAt: "2026-04-10T09:00:00.000Z",
-    loginCount: 48,
+    loginCount: 12,
     failedLoginAttempts: 3,
   },
   usr_007: {
-    lastLoginAt: "2026-05-30T14:22:00.000Z",
-    loginCount: 201,
+    lastLoginAt: "2026-05-30T14:00:00.000Z",
+    loginCount: 67,
     failedLoginAttempts: 0,
   },
   usr_008: {
-    lastLoginAt: "2026-05-15T10:00:00.000Z",
-    loginCount: 67,
+    lastLoginAt: "2026-05-15T08:30:00.000Z",
+    loginCount: 41,
     failedLoginAttempts: 5,
   },
   usr_009: {
-    lastLoginAt: "2026-05-31T05:18:00.000Z",
-    loginCount: 178,
-    failedLoginAttempts: 0,
-  },
-  usr_010: {
-    lastLoginAt: "2026-05-27T13:40:00.000Z",
-    loginCount: 112,
+    lastLoginAt: "2026-05-31T05:20:00.000Z",
+    loginCount: 88,
     failedLoginAttempts: 1,
   },
-  usr_011: {
-    lastLoginAt: "2026-03-01T08:00:00.000Z",
-    loginCount: 89,
-    failedLoginAttempts: 0,
-  },
-  usr_012: {
-    lastLoginAt: "2026-05-29T09:55:00.000Z",
-    loginCount: 134,
-    failedLoginAttempts: 0,
-  },
-  usr_013: {
-    lastLoginAt: "2026-05-30T12:10:00.000Z",
-    loginCount: 245,
-    failedLoginAttempts: 0,
-  },
-  usr_014: {
-    lastLoginAt: "2026-05-20T15:30:00.000Z",
-    loginCount: 76,
-    failedLoginAttempts: 4,
-  },
-  usr_015: {
-    lastLoginAt: "2026-05-31T04:50:00.000Z",
-    loginCount: 198,
-    failedLoginAttempts: 0,
-  },
-  usr_016: {
-    lastLoginAt: "2026-02-14T11:00:00.000Z",
+  usr_010: {
+    lastLoginAt: "2026-05-27T16:45:00.000Z",
     loginCount: 31,
     failedLoginAttempts: 0,
   },
+  usr_011: {
+    lastLoginAt: "2026-04-22T10:00:00.000Z",
+    loginCount: 19,
+    failedLoginAttempts: 2,
+  },
+  usr_012: {
+    lastLoginAt: "2026-05-29T09:30:00.000Z",
+    loginCount: 55,
+    failedLoginAttempts: 0,
+  },
+  usr_013: {
+    lastLoginAt: "2026-05-31T08:00:00.000Z",
+    loginCount: 102,
+    failedLoginAttempts: 0,
+  },
+  usr_014: {
+    lastLoginAt: "2026-05-10T12:00:00.000Z",
+    loginCount: 8,
+    failedLoginAttempts: 4,
+  },
+  usr_015: {
+    lastLoginAt: "2026-05-30T11:15:00.000Z",
+    loginCount: 73,
+    failedLoginAttempts: 0,
+  },
+  usr_016: {
+    lastLoginAt: "2026-03-01T07:00:00.000Z",
+    loginCount: 5,
+    failedLoginAttempts: 1,
+  },
   usr_017: {
-    lastLoginAt: "2026-05-30T18:05:00.000Z",
-    loginCount: 167,
+    lastLoginAt: "2026-05-28T13:40:00.000Z",
+    loginCount: 61,
     failedLoginAttempts: 0,
   },
   usr_018: {
-    lastLoginAt: "2026-05-28T07:30:00.000Z",
-    loginCount: 102,
-    failedLoginAttempts: 1,
+    lastLoginAt: "2026-05-26T15:20:00.000Z",
+    loginCount: 38,
+    failedLoginAttempts: 0,
   },
   usr_019: {
-    lastLoginAt: "2026-05-31T08:00:00.000Z",
-    loginCount: 221,
+    lastLoginAt: "2026-05-31T06:50:00.000Z",
+    loginCount: 119,
     failedLoginAttempts: 0,
   },
   usr_020: {
@@ -102,6 +109,21 @@ const SEED_ACCOUNT_STATS: Record<string, UserAccountStats> = {
     failedLoginAttempts: 2,
   },
 };
+
+function hydrateAccountStats(seed: UserAccountStatsSeed): UserAccountStats {
+  return {
+    lastLoginAt: parseOptionalApiDate(seed.lastLoginAt),
+    loginCount: seed.loginCount,
+    failedLoginAttempts: seed.failedLoginAttempts,
+  };
+}
+
+const SEED_ACCOUNT_STATS: Record<string, UserAccountStats> = Object.fromEntries(
+  Object.entries(SEED_ACCOUNT_STATS_RAW).map(([userId, seed]) => [
+    userId,
+    hydrateAccountStats(seed),
+  ]),
+);
 
 const DEFAULT_STATS: UserAccountStats = {
   lastLoginAt: null,

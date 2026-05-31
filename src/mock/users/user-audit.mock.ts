@@ -1,3 +1,4 @@
+import { parseApiDate } from "@/lib/transformers/common";
 import type {
   UserAuditActionType,
   UserAuditEntry,
@@ -5,7 +6,9 @@ import type {
 import type { UserActivityQueryParams } from "@/modules/users/types/user-audit.types";
 import type { PaginatedResponse } from "@/types/api.types";
 
-const SEED_AUDIT: UserAuditEntry[] = [
+type UserAuditSeed = Omit<UserAuditEntry, "createdAt"> & { createdAt: string };
+
+const SEED_AUDIT_RAW: UserAuditSeed[] = [
   {
     id: "audit_001",
     userId: "usr_006",
@@ -71,6 +74,15 @@ const SEED_AUDIT: UserAuditEntry[] = [
   },
 ];
 
+function hydrateUserAuditEntry(entry: UserAuditSeed): UserAuditEntry {
+  return {
+    ...entry,
+    createdAt: parseApiDate(entry.createdAt),
+  };
+}
+
+const SEED_AUDIT: UserAuditEntry[] = SEED_AUDIT_RAW.map(hydrateUserAuditEntry);
+
 let auditStore: UserAuditEntry[] = structuredClone(SEED_AUDIT);
 
 export function getUserAuditStore(): UserAuditEntry[] {
@@ -85,7 +97,7 @@ export function appendUserAuditEntry(entry: Omit<UserAuditEntry, "id" | "created
   const record: UserAuditEntry = {
     ...entry,
     id: `audit_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
   };
   auditStore.unshift(record);
   return record;
@@ -101,7 +113,7 @@ export function listUserAuditEntries(
     .filter((entry) => entry.userId === userId)
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        b.createdAt.getTime() - a.createdAt.getTime(),
     );
   const lastPage = Math.max(1, Math.ceil(filtered.length / perPage));
   const safePage = Math.min(Math.max(1, page), lastPage);

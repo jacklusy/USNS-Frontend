@@ -116,7 +116,7 @@ export function UsersTable({
         header: "Created",
         cell: (row) =>
           new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
-            new Date(row.createdAt),
+            row.createdAt,
           ),
         sortable: true,
       },

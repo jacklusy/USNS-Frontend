@@ -1,3 +1,8 @@
+import {
+  collegeDtoFromSeed,
+  toCollege,
+  type CollegeSeedRecord,
+} from "@/lib/transformers/academic.transformer";
 import type { College } from "@/modules/academic/types/academic.types";
 import type { CollegeListQueryParams } from "@/modules/academic/types/academic.types";
 import type { PaginatedResponse } from "@/types/api.types";
@@ -6,7 +11,7 @@ import { findUserNameById } from "@/mock/academic/user-labels.mock";
 import { getDepartmentsStore } from "@/mock/academic/departments.mock";
 import { matchesSearch, paginate } from "@/mock/academic/academic-mock-utils";
 
-const SEED_COLLEGES: College[] = [
+const SEED_COLLEGES: CollegeSeedRecord[] = [
   {
     id: "col_engineering",
     code: "ENG",
@@ -48,14 +53,18 @@ const SEED_COLLEGES: College[] = [
   },
 ];
 
-let collegesStore: College[] = structuredClone(SEED_COLLEGES);
+function hydrateColleges(records: CollegeSeedRecord[]): College[] {
+  return records.map((record) => toCollege(collegeDtoFromSeed(record)));
+}
+
+let collegesStore: College[] = hydrateColleges(SEED_COLLEGES);
 
 export function getCollegesStore(): College[] {
   return collegesStore;
 }
 
 export function resetCollegesStore(): void {
-  collegesStore = structuredClone(SEED_COLLEGES);
+  collegesStore = hydrateColleges(SEED_COLLEGES);
 }
 
 export function findCollegeById(id: string): College | undefined {

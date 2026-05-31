@@ -17,7 +17,7 @@ export interface AdministrativeStaff extends DataTableRowBase {
   position: string;
   dashboardRole: StaffDashboardRole;
   status: EntityStatus;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface StaffDetail {

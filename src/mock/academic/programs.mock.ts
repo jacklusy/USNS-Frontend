@@ -1,3 +1,4 @@
+import { parseApiDate } from "@/lib/transformers/common";
 import type { Program } from "@/modules/academic/types/academic.types";
 import type { ProgramListQueryParams } from "@/modules/academic/types/academic.types";
 import type { ProgramType } from "@/modules/academic/types/academic.types";
@@ -38,7 +39,9 @@ const SEED_PROGRAMS: Program[] = Array.from({ length: 20 }, (_, index) => {
     enrolledCount: 40 + index * 7,
     courseCount: courseIds.length,
     courseIds,
-    createdAt: `2024-03-${String((index % 28) + 1).padStart(2, "0")}T12:00:00.000Z`,
+    createdAt: parseApiDate(
+      `2024-03-${String((index % 28) + 1).padStart(2, "0")}T12:00:00.000Z`,
+    ),
   };
 });
 

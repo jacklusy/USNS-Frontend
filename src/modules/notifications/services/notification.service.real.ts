@@ -1,4 +1,8 @@
+import { toNotification } from "@/lib/transformers/notification.transformer";
+import { del, get, getPaginated, post, put } from "@/services/api-client";
+import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse } from "@/types/api.types";
+import type { NotificationDto } from "@/types/dto/notification.dto";
 import type {
   Notification,
   NotificationListQueryParams,
@@ -8,47 +12,88 @@ import type {
 import type { NotificationPreferences } from "../types/preferences.types";
 import type { INotificationService } from "./notification.service";
 
+function buildListQuery(params: NotificationListQueryParams): string {
+  const search = new URLSearchParams();
+  search.set("page", String(params.page));
+  search.set("per_page", String(params.per_page));
+  if (params.category) search.set("category", params.category);
+  if (params.read) search.set("read", params.read);
+  const query = search.toString();
+  return query ? `?${query}` : "";
+}
+
 export class RealNotificationService implements INotificationService {
   async list(
-    _params: NotificationListQueryParams,
+    params: NotificationListQueryParams,
   ): Promise<NotificationPaginatedResponse> {
-    throw new Error("Notifications API not integrated");
+    const response = await getPaginated<NotificationDto>(
+      `${ENDPOINTS.notifications.list}${buildListQuery(params)}`,
+    );
+    return {
+      data: response.data.map(toNotification),
+      meta: response.meta as NotificationPaginatedResponse["meta"],
+    };
   }
 
-  async listRecentUnread(
-    _limit: number,
-  ): Promise<ApiResponse<Notification[]>> {
-    throw new Error("Notifications API not integrated");
+  async listRecentUnread(limit: number): Promise<ApiResponse<Notification[]>> {
+    const data = await get<NotificationDto[]>(
+      `${ENDPOINTS.notifications.recent}?limit=${limit}`,
+    );
+    return { data: data.map(toNotification) };
   }
 
-  async markRead(_id: string): Promise<ApiResponse<Notification>> {
-    throw new Error("Notifications API not integrated");
+  async markRead(id: string): Promise<ApiResponse<Notification>> {
+    const data = await post<NotificationDto, Record<string, never>>(
+      ENDPOINTS.notifications.markRead(id),
+      {},
+    );
+    return { data: toNotification(data) };
   }
 
-  async markUnread(_id: string): Promise<ApiResponse<Notification>> {
-    throw new Error("Notifications API not integrated");
+  async markUnread(id: string): Promise<ApiResponse<Notification>> {
+    const data = await post<NotificationDto, Record<string, never>>(
+      ENDPOINTS.notifications.markUnread(id),
+      {},
+    );
+    return { data: toNotification(data) };
   }
 
   async markAllRead(): Promise<ApiResponse<null>> {
-    throw new Error("Notifications API not integrated");
+    await post<null, Record<string, never>>(
+      ENDPOINTS.notifications.markAllRead,
+      {},
+    );
+    return { data: null };
   }
 
-  async delete(_id: string): Promise<ApiResponse<null>> {
-    throw new Error("Notifications API not integrated");
+  async delete(id: string): Promise<ApiResponse<null>> {
+    await del(ENDPOINTS.notifications.delete(id));
+    return { data: null };
   }
 
   async getPreferences(): Promise<ApiResponse<NotificationPreferences>> {
-    throw new Error("Notifications API not integrated");
+    const data = await get<NotificationPreferences>(
+      ENDPOINTS.notifications.preferences,
+    );
+    return { data };
   }
 
   async updatePreference(
-    _input: UpdateNotificationPreferenceInput,
+    input: UpdateNotificationPreferenceInput,
   ): Promise<ApiResponse<NotificationPreferences>> {
-    throw new Error("Notifications API not integrated");
+    const data = await put<NotificationPreferences, UpdateNotificationPreferenceInput>(
+      ENDPOINTS.notifications.preferences,
+      input,
+    );
+    return { data };
   }
 
   async resetPreferences(): Promise<ApiResponse<NotificationPreferences>> {
-    throw new Error("Notifications API not integrated");
+    const data = await post<NotificationPreferences, Record<string, never>>(
+      ENDPOINTS.notifications.preferencesReset,
+      {},
+    );
+    return { data };
   }
 }
 

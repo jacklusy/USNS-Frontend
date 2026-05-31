@@ -23,7 +23,7 @@ interface UserProfileSectionProps {
 export function UserProfileSection({ user }: UserProfileSectionProps) {
   const joinDate = new Intl.DateTimeFormat(undefined, {
     dateStyle: "long",
-  }).format(new Date(user.createdAt));
+  }).format(user.createdAt);
 
   return (
     <section

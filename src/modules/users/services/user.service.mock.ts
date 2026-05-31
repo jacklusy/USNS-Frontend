@@ -16,6 +16,10 @@ import {
   generateUserId,
   getUsersStore,
   paginateUsers,
+  prependUserToStore,
+  removeUserFromStore,
+  replaceUserInStore,
+  setUsersStore,
   withDepartmentName,
 } from "@/mock/users/users.mock";
 import { useAuthStore } from "@/store/auth.slice";
@@ -140,7 +144,7 @@ export class MockUserService extends MockServiceBase implements IUserService {
       action,
       actorName,
     );
-    getUsersStore()[index] = updated;
+    replaceUserInStore(updated);
     return { data: updated, message: "Status updated" };
   }
 
@@ -157,11 +161,11 @@ export class MockUserService extends MockServiceBase implements IUserService {
       role: input.role,
       departmentId: input.departmentId,
       status: statusFromUserStatusAction("activate"),
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
       forcePasswordChange: input.forcePasswordChange,
     });
 
-    getUsersStore().unshift(user);
+    prependUserToStore(user);
     seedAccountStatsForUser(user.id);
     appendUserAuditEntry({
       userId: user.id,
@@ -199,7 +203,7 @@ export class MockUserService extends MockServiceBase implements IUserService {
         input.forcePasswordChange ?? existing.forcePasswordChange,
     });
 
-    getUsersStore()[index] = updated;
+    replaceUserInStore(updated);
     return { data: updated, message: "User updated" };
   }
 
@@ -209,7 +213,7 @@ export class MockUserService extends MockServiceBase implements IUserService {
     if (index < 0) {
       throw notFound("User not found");
     }
-    getUsersStore().splice(index, 1);
+    removeUserFromStore(id);
     return { data: null, message: "User deleted" };
   }
 
@@ -229,7 +233,7 @@ export class MockUserService extends MockServiceBase implements IUserService {
         action,
         actorName,
       );
-      getUsersStore()[index] = record;
+      replaceUserInStore(record);
       updated.push(record);
     }
 
@@ -240,8 +244,7 @@ export class MockUserService extends MockServiceBase implements IUserService {
     await this.delay(400);
     const idSet = new Set(ids);
     const remaining = getUsersStore().filter((user) => !idSet.has(user.id));
-    getUsersStore().length = 0;
-    getUsersStore().push(...remaining);
+    setUsersStore(remaining);
     return { data: null };
   }
 

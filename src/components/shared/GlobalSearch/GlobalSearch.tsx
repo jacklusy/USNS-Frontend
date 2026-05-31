@@ -8,7 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { SkeletonText } from "@/components/ui/loading-skeleton";
 import { GLOBAL_SEARCH_COPY } from "@/constants/global-search.constants";
 import { useGlobalSearch } from "@/hooks/useGlobalSearch";
-import { getGlobalSearchTypeIcon } from "@/services/search/global-search.service.mock";
+import { getGlobalSearchTypeIcon } from "@/services/search";
 import type { GlobalSearchResultType } from "@/types/global-search.types";
 import { getInputClassName } from "@/utils/input-classes";
 

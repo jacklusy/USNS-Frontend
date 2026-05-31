@@ -2,8 +2,11 @@ const MINUTE_MS = 60 * 1000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
-export function formatRelativeTime(isoDate: string, now: Date = new Date()): string {
-  const then = new Date(isoDate).getTime();
+export function formatRelativeTime(
+  isoDate: string | Date,
+  now: Date = new Date(),
+): string {
+  const then = isoDate instanceof Date ? isoDate.getTime() : new Date(isoDate).getTime();
   const diffMs = now.getTime() - then;
 
   if (Number.isNaN(then) || diffMs < 0) {

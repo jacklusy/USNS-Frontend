@@ -1,10 +1,18 @@
+import {
+  auditLogDetailDtoFromSeed,
+  toAuditLog,
+  toAuditLogDetail,
+  type AuditLogSeedRecord,
+} from "@/lib/transformers/audit.transformer";
 import type {
   AuditLog,
   AuditLogDetail,
   AuditLogListQueryParams,
   AuditLogResult,
 } from "@/modules/audit/types/audit-log.types";
+import { paginate } from "@/mock/lib/mock-query";
 import type { PaginatedResponse } from "@/types/api.types";
+import type { AuditLogDetailDto } from "@/types/dto/audit.dto";
 
 const ACTORS = [
   { name: "James Okonkwo", id: "usr_admin" },
@@ -16,9 +24,9 @@ const ACTORS = [
 const ACTIONS = ["create", "update", "delete", "login", "export", "status_change"];
 const RESOURCES = ["user", "role", "college", "department", "course", "settings", "report"];
 
-function buildSeedLogs(): AuditLogDetail[] {
-  const logs: AuditLogDetail[] = [];
-  for (let i = 1; i <= 36; i++) {
+function buildSeedLogs(): AuditLogDetailDto[] {
+  const logs: AuditLogSeedRecord[] = [];
+  for (let i = 1; i <= 52; i++) {
     const actor = ACTORS[i % ACTORS.length];
     const action = ACTIONS[i % ACTIONS.length];
     const resourceType = RESOURCES[i % RESOURCES.length];
@@ -54,17 +62,25 @@ function buildSeedLogs(): AuditLogDetail[] {
       metadata: { source: "dashboard", sessionId: `sess_${i}` },
     });
   }
-  return logs;
+  return logs.map(auditLogDetailDtoFromSeed);
 }
 
-let auditLogStore: AuditLogDetail[] = buildSeedLogs();
+let auditLogDtoStore: AuditLogDetailDto[] = buildSeedLogs();
+
+function hydrateAuditLogs(): AuditLogDetail[] {
+  return auditLogDtoStore.map(toAuditLogDetail);
+}
+
+export function getAuditLogStoreCount(): number {
+  return auditLogDtoStore.length;
+}
 
 function matchesDate(
-  timestamp: string,
+  timestamp: Date,
   dateFrom?: string,
   dateTo?: string,
 ): boolean {
-  const day = timestamp.slice(0, 10);
+  const day = timestamp.toISOString().slice(0, 10);
   if (dateFrom && day < dateFrom) return false;
   if (dateTo && day > dateTo) return false;
   return true;
@@ -96,23 +112,15 @@ export function paginateAuditLogs(
   page: number,
   perPage: number,
 ): PaginatedResponse<AuditLog> {
-  const total = items.length;
-  const lastPage = Math.max(1, Math.ceil(total / perPage));
-  const safePage = Math.min(Math.max(1, page), lastPage);
-  const start = (safePage - 1) * perPage;
-  const data = items.slice(start, start + perPage);
-  return {
-    data,
-    meta: { total, page: safePage, per_page: perPage, last_page: lastPage },
-  };
+  return paginate(items, page, perPage);
 }
 
 export function listAuditLogsFromStore(
   params: AuditLogListQueryParams,
 ): PaginatedResponse<AuditLog> {
-  const filtered = filterAuditLogs(auditLogStore, params);
+  const filtered = filterAuditLogs(hydrateAuditLogs(), params);
   const sorted = [...filtered].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
   );
   return paginateAuditLogs(sorted, params.page, params.per_page);
 }
@@ -120,12 +128,13 @@ export function listAuditLogsFromStore(
 export function listAllAuditLogsFromStore(
   params: Omit<AuditLogListQueryParams, "page" | "per_page">,
 ): AuditLog[] {
-  const filtered = filterAuditLogs(auditLogStore, params);
+  const filtered = filterAuditLogs(hydrateAuditLogs(), params);
   return [...filtered].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
   );
 }
 
 export function getAuditLogByIdFromStore(id: string): AuditLogDetail | null {
-  return auditLogStore.find((item) => item.id === id) ?? null;
+  const dto = auditLogDtoStore.find((item) => item.id === id);
+  return dto ? toAuditLogDetail(dto) : null;
 }

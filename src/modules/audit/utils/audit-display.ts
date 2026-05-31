@@ -1,10 +1,11 @@
 import { AUDIT_LOG_ACTION_OPTIONS } from "@/constants/audit-log.constants";
 
-export function formatAuditTimestamp(iso: string): string {
+export function formatAuditTimestamp(value: string | Date): string {
+  const date = value instanceof Date ? value : new Date(value);
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(iso));
+  }).format(date);
 }
 
 export function formatAuditActionLabel(action: string): string {

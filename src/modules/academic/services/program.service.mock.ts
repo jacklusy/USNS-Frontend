@@ -73,7 +73,7 @@ export class MockProgramService extends MockServiceBase implements IProgramServi
       enrolledCount: 0,
       courseCount: input.courseIds.length,
       courseIds: [...input.courseIds],
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
     getProgramsStore().unshift(program);
     syncProgramCourseLinks();

@@ -247,6 +247,21 @@ Shared utilities: `src/utils/apply-laravel-errors-to-form.ts` (`applyLaravelErro
 
 Auth-specific pages remain at `/errors/unauthorized` and `/session-expired`.
 
+### Mock layer & API prep (EPIC-16)
+
+Full integration checklist and per-module mapping: [docs/API-INTEGRATION.md](docs/API-INTEGRATION.md).
+
+| Area | Location |
+| --- | --- |
+| Mock seeds | `src/mock/` (import only from `*.service.mock.ts`) |
+| DTO types | `src/types/dto/` |
+| Transformers | `src/lib/transformers/` |
+| Mock query helpers | `src/mock/lib/mock-query.ts` |
+| Dev error simulation | `/dev/mock-tools` (delay + `AppError` codes via `mock-dev.slice`) |
+| Seed counts (dev) | `/dev/mock-tools` + `src/mock/lib/seed-stats.ts` |
+
+Set `NEXT_PUBLIC_MOCK_MODE=false` and configure `NEXT_PUBLIC_API_BASE_URL` when connecting to Laravel. Real services map API DTOs through transformers before returning domain types to hooks.
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

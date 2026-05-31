@@ -154,4 +154,7 @@ export const ENDPOINTS = {
     changePassword: "/profile/change-password",
     preferences: "/profile/preferences",
   },
+  search: {
+    global: "/search",
+  },
 } as const;

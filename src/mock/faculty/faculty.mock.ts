@@ -2,6 +2,7 @@ import {
   ACTIVE_SEMESTER_LABEL,
   FACULTY_MAX_CREDIT_HOURS,
 } from "@/constants/faculty-management.constants";
+import { parseApiDate } from "@/lib/transformers/common";
 import { findCourseById, getCoursesStore } from "@/mock/academic/courses.mock";
 import { findDepartmentById } from "@/mock/academic/departments.mock";
 import { matchesSearch, paginate } from "@/mock/academic/academic-mock-utils";
@@ -136,7 +137,9 @@ function buildSeedFaculty(): FacultyMember[] {
       status: index % 9 === 0 ? "inactive" : "active",
       assignedCourseIds,
       publicationsCount: index % 7,
-      createdAt: `2023-0${(index % 9) + 1}-10T08:00:00.000Z`,
+      createdAt: parseApiDate(
+        `2023-0${(index % 9) + 1}-10T08:00:00.000Z`,
+      ),
     });
   }
   return members;

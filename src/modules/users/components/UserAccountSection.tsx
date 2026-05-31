@@ -7,14 +7,14 @@ interface UserAccountSectionProps {
   account: UserAccountStats;
 }
 
-function formatLastLogin(value: string | null): string {
+function formatLastLogin(value: Date | null): string {
   if (!value) {
     return "Never";
   }
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value));
+  }).format(value);
 }
 
 export function UserAccountSection({ account }: UserAccountSectionProps) {

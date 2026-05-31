@@ -71,7 +71,7 @@ export class MockCollegeService extends MockServiceBase implements ICollegeServi
       status: input.status,
       departmentCount: 0,
       studentCount: 0,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
     getCollegesStore().unshift(college);
     recomputeCollegeCounts();

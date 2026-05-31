@@ -1,3 +1,8 @@
+import {
+  departmentDtoFromSeed,
+  toDepartment,
+  type DepartmentSeedRecord,
+} from "@/lib/transformers/academic.transformer";
 import type { Department } from "@/modules/academic/types/academic.types";
 import type { DepartmentListQueryParams } from "@/modules/academic/types/academic.types";
 import type { PaginatedResponse } from "@/types/api.types";
@@ -9,7 +14,7 @@ import { findUserNameById } from "@/mock/academic/user-labels.mock";
 import { getCoursesStore } from "@/mock/academic/courses.mock";
 import { matchesSearch, paginate } from "@/mock/academic/academic-mock-utils";
 
-const SEED_DEPARTMENTS: Department[] = [
+const SEED_DEPARTMENTS: DepartmentSeedRecord[] = [
   {
     id: "dept_executive",
     code: "EXE",
@@ -166,14 +171,18 @@ const SEED_DEPARTMENTS: Department[] = [
   },
 ];
 
-let departmentsStore: Department[] = structuredClone(SEED_DEPARTMENTS);
+function hydrateDepartments(records: DepartmentSeedRecord[]): Department[] {
+  return records.map((record) => toDepartment(departmentDtoFromSeed(record)));
+}
+
+let departmentsStore: Department[] = hydrateDepartments(SEED_DEPARTMENTS);
 
 export function getDepartmentsStore(): Department[] {
   return departmentsStore;
 }
 
 export function resetDepartmentsStore(): void {
-  departmentsStore = structuredClone(SEED_DEPARTMENTS);
+  departmentsStore = hydrateDepartments(SEED_DEPARTMENTS);
 }
 
 export function findDepartmentById(id: string): Department | undefined {

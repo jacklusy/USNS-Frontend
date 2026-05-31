@@ -268,6 +268,10 @@ const SEED_SYSTEM_EVENTS: SystemEventDetail[] = [
 
 let systemEventStore: SystemEventDetail[] = structuredClone(SEED_SYSTEM_EVENTS);
 
+export function getSystemEventStoreCount(): number {
+  return systemEventStore.length;
+}
+
 function matchesDate(
   timestamp: string,
   dateFrom?: string,

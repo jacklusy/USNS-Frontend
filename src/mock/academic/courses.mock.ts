@@ -1,3 +1,4 @@
+import { parseApiDate } from "@/lib/transformers/common";
 import type { Course } from "@/modules/academic/types/academic.types";
 import type { CourseListQueryParams } from "@/modules/academic/types/academic.types";
 import type { CourseSection } from "@/modules/academic/types/academic.types";
@@ -53,7 +54,9 @@ function buildSeedCourses(): Course[] {
         sectionCount: 1 + (index % 3),
         enrollmentCount: 20 + (index % 40),
         programIds: [],
-        createdAt: `2024-0${(index % 9) + 1}-15T10:00:00.000Z`,
+        createdAt: parseApiDate(
+          `2024-0${(index % 9) + 1}-15T10:00:00.000Z`,
+        ),
       });
       index += 1;
       if (index > 50) return courses;

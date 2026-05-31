@@ -21,7 +21,7 @@ export interface FacultyMember extends DataTableRowBase {
   status: EntityStatus;
   assignedCourseIds: string[];
   publicationsCount: number;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface FacultySemesterAssignment extends DataTableRowBase {

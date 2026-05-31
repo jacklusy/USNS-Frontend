@@ -8,7 +8,7 @@ export interface ManagedUser extends DataTableRowBase {
   departmentId: string;
   departmentName: string;
   status: UserStatus;
-  createdAt: string;
+  createdAt: Date;
   forcePasswordChange: boolean;
 }
 
@@ -58,7 +58,7 @@ export type UserStatusAction = "activate" | "deactivate" | "suspend";
 export type BulkUserStatusAction = UserStatusAction;
 
 export interface UserAccountStats {
-  lastLoginAt: string | null;
+  lastLoginAt: Date | null;
   loginCount: number;
   failedLoginAttempts: number;
 }

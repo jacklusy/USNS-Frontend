@@ -1,3 +1,4 @@
+import { parseApiDate } from "@/lib/transformers/common";
 import { findDepartmentById } from "@/mock/academic/departments.mock";
 import { matchesSearch, paginate } from "@/mock/academic/academic-mock-utils";
 import type { EntityStatus } from "@/constants/status-badge.constants";
@@ -125,7 +126,9 @@ function buildSeedStaff(): AdministrativeStaff[] {
       position: POSITIONS[index % POSITIONS.length],
       dashboardRole: ROLES[index % ROLES.length],
       status: index % 10 === 0 ? "inactive" : "active",
-      createdAt: `2022-1${index % 2}-${(index % 28) + 1}T09:00:00.000Z`,
+      createdAt: parseApiDate(
+        `2022-1${index % 2}-${(index % 28) + 1}T09:00:00.000Z`,
+      ),
     });
   }
   return members;

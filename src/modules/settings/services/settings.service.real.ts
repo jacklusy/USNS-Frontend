@@ -1,4 +1,28 @@
+import {
+  toBackupHistoryEntry,
+  toBackupScheduleSettings,
+  toFeatureFlagsSettings,
+  toGeneralSettings,
+  toMailSettings,
+  toMaintenanceSettings,
+  toSecuritySettings,
+  toStorageSettings,
+  toTriggerBackupResult,
+} from "@/lib/transformers/settings.transformer";
+import { get, post, put } from "@/services/api-client";
+import { ENDPOINTS } from "@/services/endpoints";
 import type { ApiResponse } from "@/types/api.types";
+import type {
+  BackupHistoryEntryDto,
+  BackupScheduleSettingsDto,
+  FeatureFlagsSettingsDto,
+  GeneralSettingsDto,
+  MailSettingsDto,
+  MaintenanceSettingsDto,
+  SecuritySettingsDto,
+  StorageSettingsDto,
+  TriggerBackupResultDto,
+} from "@/types/dto/settings.dto";
 import type {
   BackupHistoryEntry,
   BackupScheduleSettings,
@@ -17,79 +41,119 @@ import type { ISettingsService } from "./settings.service";
 
 export class RealSettingsService implements ISettingsService {
   async getGeneral(): Promise<ApiResponse<GeneralSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await get<GeneralSettingsDto>(ENDPOINTS.settings.general);
+    return { data: toGeneralSettings(data) };
   }
 
-  async updateGeneral(
-    _input: GeneralSettings,
-  ): Promise<ApiResponse<GeneralSettings>> {
-    throw new Error("Settings API not integrated");
+  async updateGeneral(input: GeneralSettings): Promise<ApiResponse<GeneralSettings>> {
+    const data = await put<GeneralSettingsDto, GeneralSettings>(
+      ENDPOINTS.settings.general,
+      input,
+    );
+    return { data: toGeneralSettings(data) };
   }
 
   async getMail(): Promise<ApiResponse<MailSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await get<MailSettingsDto>(ENDPOINTS.settings.mail);
+    return { data: toMailSettings(data) };
   }
 
-  async updateMail(_input: UpdateMailInput): Promise<ApiResponse<MailSettings>> {
-    throw new Error("Settings API not integrated");
+  async updateMail(input: UpdateMailInput): Promise<ApiResponse<MailSettings>> {
+    const data = await put<MailSettingsDto, UpdateMailInput>(
+      ENDPOINTS.settings.mail,
+      input,
+    );
+    return { data: toMailSettings(data) };
   }
 
   async getStorage(): Promise<ApiResponse<StorageSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await get<StorageSettingsDto>(ENDPOINTS.settings.storage);
+    return { data: toStorageSettings(data) };
   }
 
   async updateStorage(
-    _input: UpdateStorageInput,
+    input: UpdateStorageInput,
   ): Promise<ApiResponse<StorageSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await put<StorageSettingsDto, UpdateStorageInput>(
+      ENDPOINTS.settings.storage,
+      input,
+    );
+    return { data: toStorageSettings(data) };
   }
 
   async getSecurity(): Promise<ApiResponse<SecuritySettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await get<SecuritySettingsDto>(ENDPOINTS.settings.security);
+    return { data: toSecuritySettings(data) };
   }
 
   async updateSecurity(
-    _input: UpdateSecurityInput,
+    input: UpdateSecurityInput,
   ): Promise<ApiResponse<SecuritySettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await put<SecuritySettingsDto, UpdateSecurityInput>(
+      ENDPOINTS.settings.security,
+      input,
+    );
+    return { data: toSecuritySettings(data) };
   }
 
   async getFeatures(): Promise<ApiResponse<FeatureFlagsSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await get<FeatureFlagsSettingsDto>(ENDPOINTS.settings.features);
+    return { data: toFeatureFlagsSettings(data) };
   }
 
   async updateFeatures(
-    _input: FeatureFlagsSettings,
+    input: FeatureFlagsSettings,
   ): Promise<ApiResponse<FeatureFlagsSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await put<FeatureFlagsSettingsDto, FeatureFlagsSettings>(
+      ENDPOINTS.settings.features,
+      input,
+    );
+    return { data: toFeatureFlagsSettings(data) };
   }
 
   async getBackup(): Promise<ApiResponse<BackupScheduleSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await get<BackupScheduleSettingsDto>(ENDPOINTS.settings.backup);
+    return { data: toBackupScheduleSettings(data) };
   }
 
   async updateBackupSchedule(
-    _input: Pick<BackupScheduleSettings, "frequency" | "runTime" | "retentionDays">,
+    input: Pick<BackupScheduleSettings, "frequency" | "runTime" | "retentionDays">,
   ): Promise<ApiResponse<BackupScheduleSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await put<
+      BackupScheduleSettingsDto,
+      Pick<BackupScheduleSettings, "frequency" | "runTime" | "retentionDays">
+    >(ENDPOINTS.settings.backup, input);
+    return { data: toBackupScheduleSettings(data) };
   }
 
   async triggerBackup(): Promise<ApiResponse<TriggerBackupResult>> {
-    throw new Error("Settings API not integrated");
+    const data = await post<TriggerBackupResultDto, Record<string, never>>(
+      ENDPOINTS.settings.backupTrigger,
+      {},
+    );
+    return { data: toTriggerBackupResult(data) };
   }
 
   async listBackupHistory(): Promise<ApiResponse<BackupHistoryEntry[]>> {
-    throw new Error("Settings API not integrated");
+    const data = await get<BackupHistoryEntryDto[]>(
+      ENDPOINTS.settings.backupHistory,
+    );
+    return { data: data.map(toBackupHistoryEntry) };
   }
 
   async getMaintenance(): Promise<ApiResponse<MaintenanceSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await get<MaintenanceSettingsDto>(ENDPOINTS.settings.maintenance);
+    return { data: toMaintenanceSettings(data) };
   }
 
   async setMaintenance(
-    _input: Pick<MaintenanceSettings, "enabled" | "message">,
+    input: Pick<MaintenanceSettings, "enabled" | "message">,
   ): Promise<ApiResponse<MaintenanceSettings>> {
-    throw new Error("Settings API not integrated");
+    const data = await put<
+      MaintenanceSettingsDto,
+      Pick<MaintenanceSettings, "enabled" | "message">
+    >(ENDPOINTS.settings.maintenance, input);
+    return { data: toMaintenanceSettings(data) };
   }
 }
 

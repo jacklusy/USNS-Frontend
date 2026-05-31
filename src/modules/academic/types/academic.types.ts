@@ -14,7 +14,7 @@ export interface College extends DataTableRowBase {
   status: EntityStatus;
   departmentCount: number;
   studentCount: number;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface Department extends DataTableRowBase {
@@ -28,7 +28,7 @@ export interface Department extends DataTableRowBase {
   status: EntityStatus;
   courseCount: number;
   staffCount: number;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface DepartmentOption {
@@ -48,7 +48,7 @@ export interface Program extends DataTableRowBase {
   enrolledCount: number;
   courseCount: number;
   courseIds: string[];
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface Course extends DataTableRowBase {
@@ -63,7 +63,7 @@ export interface Course extends DataTableRowBase {
   sectionCount: number;
   enrollmentCount: number;
   programIds: string[];
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface CourseSection {

@@ -1,10 +1,18 @@
+import {
+  managedUserDtoFromSeed,
+  toManagedUser,
+  toManagedUserDto,
+  type ManagedUserSeedRecord,
+} from "@/lib/transformers/user.transformer";
 import type { ManagedUser } from "@/modules/users/types/user-management.types";
+import type { ManagedUserDto } from "@/types/dto/user.dto";
 import type { UserListQueryParams } from "@/modules/users/types/user-management.types";
+import { matchesSearch, paginate } from "@/mock/lib/mock-query";
 import type { PaginatedResponse } from "@/types/api.types";
 import { UserStatus } from "@/types/user.types";
 import { findDepartmentLabel } from "@/mock/academic/departments.mock";
 
-const SEED_USERS: ManagedUser[] = [
+const SEED_USERS: ManagedUserSeedRecord[] = [
   {
     id: "usr_president",
     fullName: "Dr. Layla Hassan",
@@ -225,16 +233,128 @@ const SEED_USERS: ManagedUser[] = [
     createdAt: "2025-01-10T13:15:00.000Z",
     forcePasswordChange: false,
   },
+  {
+    id: "usr_021",
+    fullName: "Victoria Steele",
+    email: "victoria@usns.edu",
+    role: "president",
+    departmentId: "dept_executive",
+    departmentName: "Executive Administration",
+    status: UserStatus.Active,
+    createdAt: "2025-01-20T10:00:00.000Z",
+    forcePasswordChange: false,
+  },
+  {
+    id: "usr_022",
+    fullName: "Ian Morrison",
+    email: "ian@usns.edu",
+    role: "dba",
+    departmentId: "dept_it",
+    departmentName: "IT",
+    status: UserStatus.Active,
+    createdAt: "2025-02-05T11:30:00.000Z",
+    forcePasswordChange: false,
+  },
+  {
+    id: "usr_023",
+    fullName: "Sofia Berg",
+    email: "sofia@usns.edu",
+    role: "dean",
+    departmentId: "dept_computer_science",
+    departmentName: "Computer Science",
+    status: UserStatus.Active,
+    createdAt: "2025-02-18T14:45:00.000Z",
+    forcePasswordChange: false,
+  },
+  {
+    id: "usr_024",
+    fullName: "Kevin Park",
+    email: "kevin@usns.edu",
+    role: "faculty",
+    departmentId: "dept_electrical",
+    departmentName: "Electrical Engineering",
+    status: UserStatus.Active,
+    createdAt: "2025-03-01T09:15:00.000Z",
+    forcePasswordChange: false,
+  },
+  {
+    id: "usr_025",
+    fullName: "Olivia Grant",
+    email: "olivia@usns.edu",
+    role: "staff",
+    departmentId: "dept_marketing",
+    departmentName: "Marketing",
+    status: UserStatus.Active,
+    createdAt: "2025-03-12T08:50:00.000Z",
+    forcePasswordChange: false,
+  },
+  {
+    id: "usr_026",
+    fullName: "Daniel Weiss",
+    email: "daniel@usns.edu",
+    role: "admin",
+    departmentId: "dept_registrar",
+    departmentName: "Registrar",
+    status: UserStatus.Suspended,
+    createdAt: "2025-03-25T16:00:00.000Z",
+    forcePasswordChange: true,
+  },
+  {
+    id: "usr_027",
+    fullName: "Mei Chen",
+    email: "mei@usns.edu",
+    role: "faculty",
+    departmentId: "dept_english",
+    departmentName: "English",
+    status: UserStatus.Inactive,
+    createdAt: "2025-04-02T12:20:00.000Z",
+    forcePasswordChange: false,
+  },
+  {
+    id: "usr_028",
+    fullName: "Robert Singh",
+    email: "robert@usns.edu",
+    role: "staff",
+    departmentId: "dept_operations",
+    departmentName: "Operations",
+    status: UserStatus.Active,
+    createdAt: "2025-04-15T07:40:00.000Z",
+    forcePasswordChange: false,
+  },
 ];
 
-let usersStore: ManagedUser[] = structuredClone(SEED_USERS);
+let usersDtoStore: ManagedUserDto[] = SEED_USERS.map(managedUserDtoFromSeed);
+
+export function getUsersDtoStore(): ManagedUserDto[] {
+  return usersDtoStore;
+}
 
 export function getUsersStore(): ManagedUser[] {
-  return usersStore;
+  return usersDtoStore.map(toManagedUser);
 }
 
 export function resetUsersStore(): void {
-  usersStore = structuredClone(SEED_USERS);
+  usersDtoStore = SEED_USERS.map(managedUserDtoFromSeed);
+}
+
+export function prependUserToStore(user: ManagedUser): void {
+  usersDtoStore.unshift(toManagedUserDto(user));
+}
+
+export function replaceUserInStore(user: ManagedUser): void {
+  const index = usersDtoStore.findIndex((entry) => entry.id === user.id);
+  if (index < 0) {
+    return;
+  }
+  usersDtoStore[index] = toManagedUserDto(user);
+}
+
+export function removeUserFromStore(userId: string): void {
+  usersDtoStore = usersDtoStore.filter((entry) => entry.id !== userId);
+}
+
+export function setUsersStore(users: ManagedUser[]): void {
+  usersDtoStore = users.map(toManagedUserDto);
 }
 
 export function generateUserId(): string {
@@ -250,7 +370,7 @@ export function emailExistsInStore(
   excludeUserId?: string,
 ): boolean {
   const normalized = normalizeEmail(email);
-  return usersStore.some(
+  return usersDtoStore.some(
     (user) =>
       normalizeEmail(user.email) === normalized && user.id !== excludeUserId,
   );
@@ -263,11 +383,11 @@ export function filterUsers(
   const search = params.search?.trim().toLowerCase();
 
   return users.filter((user) => {
-    if (search) {
-      const matches =
-        user.fullName.toLowerCase().includes(search) ||
-        user.email.toLowerCase().includes(search);
-      if (!matches) return false;
+    if (
+      search &&
+      !matchesSearch(search, [user.fullName, user.email, user.departmentName])
+    ) {
+      return false;
     }
 
     if (params.roles && params.roles.length > 0) {
@@ -287,20 +407,7 @@ export function paginateUsers(
   page: number,
   perPage: number,
 ): PaginatedResponse<ManagedUser> {
-  const lastPage = Math.max(1, Math.ceil(users.length / perPage));
-  const safePage = Math.min(Math.max(1, page), lastPage);
-  const start = (safePage - 1) * perPage;
-  const data = users.slice(start, start + perPage);
-
-  return {
-    data,
-    meta: {
-      total: users.length,
-      page: safePage,
-      per_page: perPage,
-      last_page: lastPage,
-    },
-  };
+  return paginate(users, page, perPage);
 }
 
 export function withDepartmentName(

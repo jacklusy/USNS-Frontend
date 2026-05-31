@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { searchGlobal } from "@/services/search/global-search.service.mock";
+import { globalSearchService } from "@/services/search";
 import type { GlobalSearchResult } from "@/types/global-search.types";
 
 export function useGlobalSearch(query: string) {
@@ -12,9 +12,12 @@ export function useGlobalSearch(query: string) {
     let cancelled = false;
 
     const timer = setTimeout(() => {
-      if (cancelled) return;
+      if (cancelled) {
+        return;
+      }
       setIsLoading(true);
-      searchGlobal(query)
+      globalSearchService
+        .search(query)
         .then((data) => {
           if (!cancelled) {
             setResults(data);

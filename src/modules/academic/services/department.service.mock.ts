@@ -93,7 +93,7 @@ export class MockDepartmentService
       status: input.status,
       courseCount: 0,
       staffCount: 0,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
     };
     getDepartmentsStore().unshift(dept);
     recomputeDepartmentCounts();
