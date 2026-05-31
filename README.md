@@ -233,6 +233,20 @@ Mock data in `src/mock/profile/`; services in `src/modules/profile/`.
 
 Test password for mock accounts: `Password1!`
 
+### Error handling (EPIC-15)
+
+Shared utilities: `src/utils/apply-laravel-errors-to-form.ts` (`applyLaravelErrorsToForm`, `applyAppErrorToForm`); error logging stub in `src/lib/error-logger.ts`.
+
+| Ticket | Route / behavior | Feature |
+| --- | --- | --- |
+| Global error boundary (ERR-01) | App-wide `AppErrorBoundary` in providers; resets on route change; dev trigger at `/dev/errors` | Friendly fallback, reload / try again; dev console logging only |
+| 404 Not Found (ERR-02) | Unmatched dashboard routes → `(dashboard)/not-found` with shell | Go to dashboard, go back |
+| HTTP error pages (ERR-03) | `/errors/bad-request`, `/errors/forbidden`, `/errors/conflict`, `/errors/validation`, `/errors/rate-limit`, `/errors/server`, `/errors/unavailable` | Programmatic navigation via `redirectToHttpError`; catalog at `/dev/errors` |
+| Laravel validation (ERR-04) | Used in form drawers on 422 | Field + nested keys, joined messages, `root` for global errors |
+| Offline / network (ERR-05) | Offline banner in dashboard layout | Auto-dismiss when online; React Query retries network errors up to 3×; reconnect invalidates queries |
+
+Auth-specific pages remain at `/errors/unauthorized` and `/session-expired`.
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

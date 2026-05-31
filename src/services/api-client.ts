@@ -35,24 +35,58 @@ function isAppError(value: unknown): value is AppError {
   );
 }
 
-function mapStatusToCode(status: number | undefined): AppErrorCode {
+function parseRetryAfterSeconds(
+  header: string | string[] | undefined,
+): number | undefined {
+  if (header === undefined) {
+    return undefined;
+  }
+  const raw = Array.isArray(header) ? header[0] : header;
+  if (!raw) {
+    return undefined;
+  }
+  const seconds = Number.parseInt(raw, 10);
+  if (!Number.isNaN(seconds) && seconds > 0) {
+    return seconds;
+  }
+  const dateMs = Date.parse(raw);
+  if (!Number.isNaN(dateMs)) {
+    const delta = Math.ceil((dateMs - Date.now()) / 1000);
+    return delta > 0 ? delta : undefined;
+  }
+  return undefined;
+}
+
+function mapStatusToCode(status: number): AppErrorCode {
+  if (status === 400) return "BAD_REQUEST";
   if (status === 401) return "UNAUTHORIZED";
   if (status === 403) return "FORBIDDEN";
   if (status === 404) return "NOT_FOUND";
+  if (status === 409) return "CONFLICT";
   if (status === 422) return "VALIDATION_ERROR";
-  if (status !== undefined && status >= 500) return "SERVER_ERROR";
-  return "NETWORK_ERROR";
+  if (status === 429) return "RATE_LIMITED";
+  if (status === 502 || status === 503) return "SERVICE_UNAVAILABLE";
+  if (status === 500) return "SERVER_ERROR";
+  if (status >= 500) return "SERVER_ERROR";
+  return "BAD_REQUEST";
 }
 
 function toAppError(error: AxiosError<LaravelErrorBody>): AppError {
   const status = error.response?.status;
+  const code =
+    status !== undefined ? mapStatusToCode(status) : "NETWORK_ERROR";
+  const retryAfterSeconds =
+    status === 429
+      ? parseRetryAfterSeconds(error.response?.headers["retry-after"])
+      : undefined;
   return {
-    code: mapStatusToCode(status),
+    code,
     message:
       error.response?.data?.message ??
       error.message ??
       "An unexpected error occurred",
     details: error.response?.data?.errors,
+    retryAfterSeconds,
   };
 }
 

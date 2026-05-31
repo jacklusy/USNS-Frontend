@@ -3,9 +3,9 @@ import { HttpErrorPageView } from "@/components/shared/HttpErrorPageView";
 import { HTTP_ERROR_PAGES } from "@/constants/http-error.constants";
 
 export const metadata: Metadata = {
-  title: HTTP_ERROR_PAGES.forbidden.documentTitle,
+  title: HTTP_ERROR_PAGES.server.documentTitle,
 };
 
-export default function ForbiddenErrorPage() {
-  return <HttpErrorPageView pageKey="forbidden" />;
+export default function ServerErrorPage() {
+  return <HttpErrorPageView pageKey="server" />;
 }

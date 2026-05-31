@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AUTH_COPY } from "@/constants/auth.constants";
 import { ROUTES } from "@/constants/routes.constants";
 import { registerAuthErrorRouter } from "@/lib/auth-error-router";
+import { registerHttpErrorRouter } from "@/lib/http-error-router";
 import {
   registerSessionExpiredHandler,
 } from "@/lib/session-handler";
@@ -16,6 +17,10 @@ export function AuthNavigationBootstrap() {
 
   useEffect(() => {
     registerAuthErrorRouter((path) => {
+      router.replace(path);
+    });
+
+    registerHttpErrorRouter((path) => {
       router.replace(path);
     });
 

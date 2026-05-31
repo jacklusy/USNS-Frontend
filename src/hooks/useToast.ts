@@ -32,6 +32,17 @@ export function useToast() {
   };
 }
 
-export function showQueryErrorToast(message: string): void {
-  push("error", { title: message });
+export function showQueryErrorToast(
+  message: string,
+  onRetry?: () => void,
+): void {
+  push("error", {
+    title: message,
+    action: onRetry
+      ? {
+          label: "Retry",
+          onClick: onRetry,
+        }
+      : undefined,
+  });
 }

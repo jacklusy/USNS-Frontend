@@ -9,6 +9,13 @@ export const ROUTES = {
   SESSION_EXPIRED: "/session-expired",
   ERRORS_UNAUTHORIZED: "/errors/unauthorized",
   ERRORS_FORBIDDEN: "/errors/forbidden",
+  ERRORS_BAD_REQUEST: "/errors/bad-request",
+  ERRORS_CONFLICT: "/errors/conflict",
+  ERRORS_VALIDATION: "/errors/validation",
+  ERRORS_RATE_LIMIT: "/errors/rate-limit",
+  ERRORS_SERVER: "/errors/server",
+  ERRORS_UNAVAILABLE: "/errors/unavailable",
+  DEV_ERRORS: "/dev/errors",
   ANNOUNCEMENTS: "/announcements",
   NOTIFICATIONS: "/notifications",
   USERS: "/users",
@@ -84,4 +91,14 @@ export function profilePreferencesTab(): string {
 export function loginWithReturn(returnUrl: string): string {
   const params = new URLSearchParams({ returnUrl });
   return `${ROUTES.LOGIN}?${params.toString()}`;
+}
+
+export function errorsRateLimitRoute(retryAfterSeconds?: number): string {
+  if (retryAfterSeconds === undefined) {
+    return ROUTES.ERRORS_RATE_LIMIT;
+  }
+  const params = new URLSearchParams({
+    retryAfter: String(retryAfterSeconds),
+  });
+  return `${ROUTES.ERRORS_RATE_LIMIT}?${params.toString()}`;
 }

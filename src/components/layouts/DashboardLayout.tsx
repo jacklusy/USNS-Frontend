@@ -4,6 +4,7 @@ import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopBar } from "./DashboardTopBar";
 import { NotificationBootstrap } from "@/modules/notifications";
+import { OfflineBanner } from "@/components/shared/OfflineBanner";
 import { MaintenanceBanner } from "@/modules/settings";
 import { useUiStore } from "@/store/ui.slice";
 
@@ -35,6 +36,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex min-w-0 flex-1 flex-col">
         <NotificationBootstrap />
         <DashboardTopBar />
+        <OfflineBanner />
         <MaintenanceBanner />
         <main id="main" className="flex-1 overflow-y-auto p-6">
           {children}

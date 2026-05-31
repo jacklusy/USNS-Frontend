@@ -1,26 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { redirectToAuthError } from "@/lib/auth-error-router";
+import { handleGlobalQueryError } from "@/lib/query-error-handler";
 import { createQueryClient } from "@/lib/query-client";
-import { showQueryErrorToast } from "@/hooks/useToast";
+import { setupOnlineManager } from "@/lib/online-manager-setup";
 
 interface QueryProviderProps {
   children: React.ReactNode;
 }
 
 export function QueryProvider({ children }: QueryProviderProps) {
-  const [queryClient] = useState(() =>
-    createQueryClient((error) => {
-      if (error.code === "UNAUTHORIZED") {
-        redirectToAuthError("unauthorized");
-        return;
-      }
-      showQueryErrorToast(error.message);
-    }),
+  const queryClientRef = useRef<ReturnType<typeof createQueryClient> | null>(
+    null,
   );
+
+  const [queryClient] = useState(() => {
+    const client = createQueryClient((error) => {
+      const invalidate = () => {
+        void queryClientRef.current?.invalidateQueries();
+      };
+      handleGlobalQueryError(error, invalidate);
+    });
+    queryClientRef.current = client;
+    return client;
+  });
+
+  useEffect(() => {
+    return setupOnlineManager(queryClient);
+  }, [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>

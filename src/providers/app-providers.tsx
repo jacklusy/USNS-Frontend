@@ -2,6 +2,7 @@
 
 import { ToastContainer } from "@/components/shared/ToastContainer";
 import { AuthNavigationBootstrap } from "./auth-navigation-bootstrap";
+import { ErrorBoundaryProvider } from "./error-boundary-provider";
 import { QueryProvider } from "./query-provider";
 import { ThemeSync } from "./theme-sync";
 
@@ -14,7 +15,7 @@ export function AppProviders({ children }: AppProvidersProps) {
     <QueryProvider>
       <ThemeSync />
       <AuthNavigationBootstrap />
-      {children}
+      <ErrorBoundaryProvider>{children}</ErrorBoundaryProvider>
       <ToastContainer />
     </QueryProvider>
   );
