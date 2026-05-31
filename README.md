@@ -217,6 +217,22 @@ Mock data in `src/mock/reports/`; services in `src/modules/reports/`.
 | Enrollment statistics (RPT-02) | `/reports/enrollment` — filters, summary metrics, bar chart, department table, CSV + print |
 | System usage (RPT-03) | `/reports/usage` — date presets, DAU line chart, top users, feature usage, peak-hours heatmap |
 
+### Profile & account settings (EPIC-14)
+
+Mock data in `src/mock/profile/`; services in `src/modules/profile/`.
+
+| Account | Access |
+| --- | --- |
+| All signed-in roles | `/profile` (faculty, staff, admin, dean, president, dba) |
+
+| Tab | Route | Feature |
+| --- | --- | --- |
+| My profile (PROF-01) | `/profile` or `/profile?tab=profile` — avatar mock upload with crop preview, inline edit display name / phone / bio |
+| Change password (PROF-02) | `/profile?tab=password` — current + new password, strength meter, wrong current password error; success redirects to profile with toast |
+| Preferences (PROF-03) | `/profile?tab=preferences` — language, timezone, date format, theme (applies immediately via `ThemeSync`) |
+
+Test password for mock accounts: `Password1!`
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

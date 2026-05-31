@@ -73,6 +73,14 @@ export function reportsUsageRoute(): string {
   return `${ROUTES.REPORTS}/usage`;
 }
 
+export function profilePasswordTab(): string {
+  return `${ROUTES.PROFILE}?tab=password`;
+}
+
+export function profilePreferencesTab(): string {
+  return `${ROUTES.PROFILE}?tab=preferences`;
+}
+
 export function loginWithReturn(returnUrl: string): string {
   const params = new URLSearchParams({ returnUrl });
   return `${ROUTES.LOGIN}?${params.toString()}`;

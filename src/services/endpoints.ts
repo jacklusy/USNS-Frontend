@@ -147,4 +147,11 @@ export const ENDPOINTS = {
     usage: "/reports/usage",
     jobById: (id: string) => `/reports/jobs/${id}`,
   },
+  profile: {
+    me: "/profile/me",
+    update: "/profile/me",
+    avatar: "/profile/me/avatar",
+    changePassword: "/profile/change-password",
+    preferences: "/profile/preferences",
+  },
 } as const;

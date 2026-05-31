@@ -15,7 +15,7 @@ export const BREADCRUMB_SEGMENT_LABELS: Record<string, string> = {
   errors: "Errors",
   unauthorized: "Unauthorized",
   forbidden: "Access denied",
-  profile: "Profile",
+  profile: "Profile & account",
   announcements: "Announcements",
   notifications: "Notifications",
   logs: "Log detail",
