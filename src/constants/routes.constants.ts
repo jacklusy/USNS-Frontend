@@ -20,6 +20,7 @@ export const ROUTES = {
   ACADEMIC_YEARS: "/academic-years",
   FACULTY: "/faculty",
   STAFF: "/staff",
+  AUDIT: "/audit",
   DEV_UI_KIT: "/dev/ui-kit",
 } as const;
 
@@ -53,6 +54,14 @@ export function facultyDetailRoute(id: string): string {
 
 export function staffDetailRoute(id: string): string {
   return `${ROUTES.STAFF}/${id}`;
+}
+
+export function auditLogDetailRoute(id: string): string {
+  return `${ROUTES.AUDIT}/logs/${id}`;
+}
+
+export function systemEventDetailRoute(id: string): string {
+  return `${ROUTES.AUDIT}/system-events/${id}`;
 }
 
 export function loginWithReturn(returnUrl: string): string {

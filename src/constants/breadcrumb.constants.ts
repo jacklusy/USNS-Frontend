@@ -15,6 +15,9 @@ export const BREADCRUMB_SEGMENT_LABELS: Record<string, string> = {
   forbidden: "Access denied",
   profile: "Profile",
   announcements: "Announcements",
+  notifications: "Notifications",
+  logs: "Log detail",
+  "system-events": "System event",
 };
 
 export const BREADCRUMB_ROUTE_LABELS: Record<string, string> = {
@@ -30,6 +33,8 @@ export const BREADCRUMB_ROUTE_LABELS: Record<string, string> = {
   "/programs": "Programs",
   "/courses": "Courses",
   "/academic-years": "Academic calendar",
+  "/audit": "Audit & monitoring",
+  "/notifications": "Notification center",
 };
 
 export function formatSegmentLabel(segment: string): string {

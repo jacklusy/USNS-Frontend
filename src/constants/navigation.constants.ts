@@ -96,11 +96,11 @@ export const DASHBOARD_NAV_GROUPS: readonly NavGroup[] = [
         allowedRoles: ["dba", "admin", "president"],
       },
       {
-        href: "/audit",
+        href: ROUTES.AUDIT,
         label: "Audit logs",
         icon: "audit",
         requiredPermission: PERMISSIONS.audit.view,
-        allowedRoles: ["dba", "president"],
+        allowedRoles: ["admin", "dba", "president"],
       },
     ],
   },

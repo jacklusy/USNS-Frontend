@@ -183,6 +183,23 @@ Mock data in `src/mock/notifications/`; services in `src/modules/notifications/`
 
 Unread count on the bell syncs from the notification store, hydrated on dashboard load and updated after mutations.
 
+### Audit & monitoring (EPIC-12)
+
+Mock data in `src/mock/audit/`; services in `src/modules/audit/`.
+
+| Account | Access |
+| --- | --- |
+| `admin@usns.edu` | Full audit hub, CSV export |
+| `dba@usns.edu` | Same |
+| `president@usns.edu` | Same (all permissions) |
+| `dean@usns.edu` | Forbidden at `/audit` |
+
+| Tab | Feature |
+| --- | --- |
+| Audit logs (AUDIT-01) | `/audit?tab=logs` — DataTable with filters, read-only, detail at `/audit/logs/[id]` with payload diff, CSV export |
+| Login history (AUDIT-02) | `/audit?tab=login-history` — auth events with failed/blocked styling and suspicious indicators, CSV export |
+| System events (AUDIT-03) | `/audit?tab=system-events` — infrastructure events by category/severity, detail at `/audit/system-events/[id]`, CSV export |
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

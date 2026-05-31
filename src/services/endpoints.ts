@@ -131,6 +131,11 @@ export const ENDPOINTS = {
     list: "/audit-logs",
     byId: (id: string) => `/audit-logs/${id}`,
     export: "/audit-logs/export",
+    loginHistory: "/audit/login-history",
+    loginHistoryExport: "/audit/login-history/export",
+    systemEvents: "/audit/system-events",
+    systemEventById: (id: string) => `/audit/system-events/${id}`,
+    systemEventsExport: "/audit/system-events/export",
   },
   reports: {
     list: "/reports",

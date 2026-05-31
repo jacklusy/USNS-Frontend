@@ -45,6 +45,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
     PERMISSIONS.reports.view,
     PERMISSIONS.settings.view,
     PERMISSIONS.settings.manage,
+    PERMISSIONS.audit.view,
+    PERMISSIONS.audit.export,
   ],
   faculty: [PERMISSIONS.dashboard.view],
   staff: [
