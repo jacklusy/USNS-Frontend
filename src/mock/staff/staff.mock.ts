@@ -127,7 +127,7 @@ function buildSeedStaff(): AdministrativeStaff[] {
       dashboardRole: ROLES[index % ROLES.length],
       status: index % 10 === 0 ? "inactive" : "active",
       createdAt: parseApiDate(
-        `2022-1${index % 2}-${(index % 28) + 1}T09:00:00.000Z`,
+        `2022-1${index % 2}-${String((index % 28) + 1).padStart(2, "0")}T09:00:00.000Z`,
       ),
     });
   }
