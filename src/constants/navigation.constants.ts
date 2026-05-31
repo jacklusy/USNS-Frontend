@@ -1,4 +1,8 @@
-import { ROUTES } from "@/constants/routes.constants";
+import {
+  ROUTES,
+  reportsEnrollmentRoute,
+  reportsUsageRoute,
+} from "@/constants/routes.constants";
 import { PERMISSIONS } from "@/types/permission.types";
 import type { Permission } from "@/types/permission.types";
 import type { UserRole } from "@/types/user.types";
@@ -168,8 +172,20 @@ export const DASHBOARD_NAV_GROUPS: readonly NavGroup[] = [
         requiredPermission: PERMISSIONS.reports.view,
         children: [
           {
-            href: "/reports",
+            href: ROUTES.REPORTS,
             label: "All reports",
+            icon: "reports",
+            requiredPermission: PERMISSIONS.reports.view,
+          },
+          {
+            href: reportsEnrollmentRoute(),
+            label: "Enrollment statistics",
+            icon: "reports",
+            requiredPermission: PERMISSIONS.reports.view,
+          },
+          {
+            href: reportsUsageRoute(),
+            label: "System usage",
             icon: "reports",
             requiredPermission: PERMISSIONS.reports.view,
           },

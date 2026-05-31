@@ -142,5 +142,9 @@ export const ENDPOINTS = {
     byId: (id: string) => `/reports/${id}`,
     generate: "/reports/generate",
     export: (id: string) => `/reports/${id}/export`,
+    recent: "/reports/recent",
+    enrollment: "/reports/enrollment",
+    usage: "/reports/usage",
+    jobById: (id: string) => `/reports/jobs/${id}`,
   },
 } as const;

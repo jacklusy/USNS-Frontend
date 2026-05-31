@@ -200,6 +200,23 @@ Mock data in `src/mock/audit/`; services in `src/modules/audit/`.
 | Login history (AUDIT-02) | `/audit?tab=login-history` — auth events with failed/blocked styling and suspicious indicators, CSV export |
 | System events (AUDIT-03) | `/audit?tab=system-events` — infrastructure events by category/severity, detail at `/audit/system-events/[id]`, CSV export |
 
+### Reports & analytics (EPIC-13)
+
+Mock data in `src/mock/reports/`; services in `src/modules/reports/`.
+
+| Account | Access |
+| --- | --- |
+| `admin@usns.edu` | Full reports hub, CSV export |
+| `dean@usns.edu` | Full reports hub, CSV export |
+| `president@usns.edu` | Full access (all permissions) |
+| `dba@usns.edu` | Forbidden at `/reports` |
+
+| Ticket | Route | Feature |
+| --- | --- | --- |
+| Reports dashboard (RPT-01) | `/reports` — categorized catalog, async generate with loading, recent 10 downloads |
+| Enrollment statistics (RPT-02) | `/reports/enrollment` — filters, summary metrics, bar chart, department table, CSV + print |
+| System usage (RPT-03) | `/reports/usage` — date presets, DAU line chart, top users, feature usage, peak-hours heatmap |
+
 ### UI component kit (EPIC-05)
 
 Shared primitives live under `src/components/ui/` (inputs, selects, checkbox) and `src/components/shared/` (`DataTable`, `EmptyState`, `ErrorState`).

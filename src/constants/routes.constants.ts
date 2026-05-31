@@ -21,6 +21,7 @@ export const ROUTES = {
   FACULTY: "/faculty",
   STAFF: "/staff",
   AUDIT: "/audit",
+  REPORTS: "/reports",
   DEV_UI_KIT: "/dev/ui-kit",
 } as const;
 
@@ -62,6 +63,14 @@ export function auditLogDetailRoute(id: string): string {
 
 export function systemEventDetailRoute(id: string): string {
   return `${ROUTES.AUDIT}/system-events/${id}`;
+}
+
+export function reportsEnrollmentRoute(): string {
+  return `${ROUTES.REPORTS}/enrollment`;
+}
+
+export function reportsUsageRoute(): string {
+  return `${ROUTES.REPORTS}/usage`;
 }
 
 export function loginWithReturn(returnUrl: string): string {

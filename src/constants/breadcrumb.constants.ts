@@ -9,6 +9,8 @@ export const BREADCRUMB_SEGMENT_LABELS: Record<string, string> = {
   courses: "Courses",
   "academic-years": "Academic calendar",
   reports: "Reports",
+  enrollment: "Enrollment statistics",
+  usage: "System usage",
   audit: "Audit logs",
   errors: "Errors",
   unauthorized: "Unauthorized",

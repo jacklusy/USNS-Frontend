@@ -143,3 +143,21 @@ body {
     background-size: auto;
   }
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .reports-print-area,
+  .reports-print-area * {
+    visibility: visible;
+  }
+
+  .reports-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
